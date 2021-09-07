@@ -1,0 +1,113 @@
+﻿using Hire_Hop_Interface.Management;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Hire_Hop_Interface.Requests
+{
+    public static class Search
+    {
+        #region Methods
+
+        public static async Task<Dictionary<string, JObject>> GetAllResults(ClientConnection myHHConn, SearchParams @params, bool LoadInDetail = false)
+        {
+            JObject jobs = await Search.LookFor(myHHConn, @params);
+            int.TryParse(jobs["total"].ToString(), out int _max_page);
+
+            Dictionary<string, JObject> results = new Dictionary<string, JObject>();
+
+            while (true)
+            {
+                int.TryParse(jobs["page"].ToString(), out int _page);
+
+                Console.WriteLine($"Loading page {_page} / {_max_page}");
+                foreach (JObject resultRow in jobs["rows"])
+                {
+                    string rId = resultRow["id"].ToString();
+                    if (!results.ContainsKey(rId))
+                    {
+                        if (LoadInDetail)
+                        {
+                            if (rId.StartsWith("j"))
+                                results.Add(rId, await Jobs.GetJobData(myHHConn, rId.Replace("j", "")));
+
+                            Console.WriteLine($"Loaded job detail {rId}");
+                        }
+                        else
+                        {
+                            results.Add(rId, resultRow);
+                        }
+                    }
+                }
+
+                @params._page++;
+
+                if (_page >= _max_page) break;
+                else jobs = await Search.LookFor(myHHConn, @params);
+            }
+
+            return results;
+        }
+
+        public static async Task<JObject> LookFor(ClientConnection client, SearchParams @params)
+        {
+            string date_str = $"{ DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
+            client = await RequestInterface.SendRequest(client, "frames/search_field_results.php", queryList: new List<string>()
+            {
+                $"local={date_str}",
+                "jobs="+(@params._jobs ? "1" : "0"),
+                "projects="+(@params._projects ? "1" : "0"),
+                "open="+(@params._open ? "1" : "0"),
+                "closed="+(@params._closed ? "1" : "0"),
+                "money_owed="+(@params._money_owed ? "1" : "0"),
+                "is_late="+(@params._is_late ? "1" : "0"),
+                "mine="+(@params._mine ? "1" : "0"),
+                "no_user="+(@params._no_user ? "1" : "0"),
+                "needs_bill="+(@params._needs_bill ? "1" : "0"),
+                $"status={@params._status}",
+                "last_search_idx=-1",
+                $"DEPOT={@params._depot}",
+                $"_search=true",
+                "nd=1630572957447",
+                $"rows={@params._rows}",
+                $"page={@params._page}",
+                $"sidx=OUT_DATE",
+                $"sord=asc"
+            });
+            string job_data = await client.__lastResponse.Content.ReadAsStringAsync();
+            try
+            {
+                return JObject.Parse(job_data);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return null;
+            }
+        }
+
+        #endregion Methods
+
+        #region Classes
+
+        public class SearchParams
+        {
+            #region Fields
+
+            public int _depot = 1,
+               _rows = 40, _page = 1;
+
+            public bool _jobs = true, _projects = false,
+                           _open = true, _closed = false,
+               _money_owed = true, _is_late = true, _mine = false, _no_user = false, _needs_bill = false;
+
+            public string _status = "0,1,2,3,4,5,6,7,8";
+
+            #endregion Fields
+
+        }
+
+        #endregion Classes
+    }
+}

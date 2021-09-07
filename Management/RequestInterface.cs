@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,9 +14,14 @@ namespace Hire_Hop_Interface.Management
     {
         #region Methods
 
-        public static async Task<ClientConnection> SendRequest(ClientConnection client, string urlPath, string method = "POST", List<string> contentList = null)
+        public static async Task<ClientConnection> SendRequest(ClientConnection client, string urlPath, string method = "POST", List<string> contentList = null, List<string> queryList = null)
         {
             var httpClient = client.httpClient;
+
+            if (queryList != null)
+            {
+                urlPath = QueryHelpers.AddQueryString(urlPath, queryList.ToDictionary(x => x.Split("=")[0], x => x.Split("=")[1]));
+            }
 
             // In production code, don't destroy the HttpClient through using, but better reuse an existing instance
             // https://www.aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
@@ -23,8 +30,8 @@ namespace Hire_Hop_Interface.Management
                 if (contentList != null)
                 {
                     request.Content = new StringContent(string.Join("&", contentList));
+                    request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
                 }
-                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
 
                 try
                 {
