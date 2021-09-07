@@ -16,16 +16,7 @@ namespace Hire_Hop_Interface.Requests
             {
                 $"job={jobId}"
             });
-            string job_data = await client.__lastResponse.Content.ReadAsStringAsync();
-            try
-            {
-                return JObject.Parse(job_data);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                return null;
-            }
+            return client.__lastContentAsJson;
         }
 
         #endregion Methods

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,12 +40,31 @@ namespace Hire_Hop_Interface.Management
                     var response = await httpClient.SendAsync(request);
 
                     client.__lastResponse = response;
+                    client.__lastContent = await response.Content.ReadAsStringAsync();
+
+                    try
+                    {
+                        client.__lastContentAsJson = JObject.Parse(client.__lastContent);
+                        if (client.__lastContentAsJson.ContainsKey("error"))
+                        {
+                            throw new Exception(client.__lastContent);
+                        }
+                    }
+                    catch (JsonReaderException e)
+                    {
+                        //Not JSON
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("An Request Error Occurred: " + e.Source);
-                    string fname = $"{e.Source} {DateTime.Now.ToShortDateString()}".Replace("\\", "-").Replace("/", "-").Replace(".", "-");
-                    File.WriteAllText($"./{fname}.log", e.ToString());
+                    if (!Directory.Exists("./logs")) Directory.CreateDirectory("./logs");
+                    Console.WriteLine("A Request Error Occurred: " + e.Source);
+                    string fname = $"{e.Source} {DateTime.Now.ToShortDateString()} {DateTime.Now.Ticks}".Replace("\\", "-").Replace("/", "-").Replace(".", "-");
+                    File.WriteAllText($"./logs/{fname}.log", e.ToString());
                 }
 
                 return client;
@@ -75,7 +96,8 @@ namespace Hire_Hop_Interface.Management
 
         public static readonly string url = "https://myhirehop.com/";
 
-        public string __id;
+        public string __id, __lastContent;
+        public JObject __lastContentAsJson;
         public HttpResponseMessage __lastResponse;
 
         public CookieCollection cookies

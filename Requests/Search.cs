@@ -10,12 +10,12 @@ namespace Hire_Hop_Interface.Requests
     {
         #region Methods
 
-        public static async Task<Dictionary<string, JObject>> GetAllResults(ClientConnection myHHConn, SearchParams @params, bool LoadInDetail = false)
+        public static async Task<Dictionary<string, SearchResult>> GetAllResults(ClientConnection client, SearchParams @params, bool LoadInDetail = false)
         {
-            JObject jobs = await Search.LookFor(myHHConn, @params);
+            JObject jobs = await Search.LookFor(client, @params);
             int.TryParse(jobs["total"].ToString(), out int _max_page);
 
-            Dictionary<string, JObject> results = new Dictionary<string, JObject>();
+            Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
 
             while (true)
             {
@@ -25,18 +25,16 @@ namespace Hire_Hop_Interface.Requests
                 foreach (JObject resultRow in jobs["rows"])
                 {
                     string rId = resultRow["id"].ToString();
+                    SearchResult result = new SearchResult(resultRow["cell"]);
                     if (!results.ContainsKey(rId))
                     {
+                        results.Add(rId, result);
+
                         if (LoadInDetail)
                         {
-                            if (rId.StartsWith("j"))
-                                results.Add(rId, await Jobs.GetJobData(myHHConn, rId.Replace("j", "")));
+                            if (rId.StartsWith("j")) result.LoadInDetail(client);
 
                             Console.WriteLine($"Loaded job detail {rId}");
-                        }
-                        else
-                        {
-                            results.Add(rId, resultRow);
                         }
                     }
                 }
@@ -44,7 +42,7 @@ namespace Hire_Hop_Interface.Requests
                 @params._page++;
 
                 if (_page >= _max_page) break;
-                else jobs = await Search.LookFor(myHHConn, @params);
+                else jobs = await Search.LookFor(client, @params);
             }
 
             return results;
@@ -75,16 +73,7 @@ namespace Hire_Hop_Interface.Requests
                 $"sidx=OUT_DATE",
                 $"sord=asc"
             });
-            string job_data = await client.__lastResponse.Content.ReadAsStringAsync();
-            try
-            {
-                return JObject.Parse(job_data);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                return null;
-            }
+            return client.__lastContentAsJson;
         }
 
         #endregion Methods
@@ -105,7 +94,6 @@ namespace Hire_Hop_Interface.Requests
             public string _status = "0,1,2,3,4,5,6,7,8";
 
             #endregion Fields
-
         }
 
         #endregion Classes
