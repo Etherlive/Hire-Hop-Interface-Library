@@ -10,7 +10,7 @@ namespace Hire_Hop_Interface.Objects
         #region Fields
 
         public Costs costs;
-        public JObject data;
+        public JObject Data;
 
         #endregion Fields
 
@@ -18,21 +18,16 @@ namespace Hire_Hop_Interface.Objects
 
         public Jobs(SearchResult searchResult)
         {
-            data = searchResult.Data;
+            Data = searchResult.Data;
         }
 
         #endregion Constructors
 
         #region Properties
 
-        public JObject Data
-        {
-            get { return data; }
-        }
-
         public string id
         {
-            get { return data["ID"].ToString().Replace("j", ""); }
+            get { return Data["ID"].ToString().Replace("j", ""); }
         }
 
         #endregion Properties
