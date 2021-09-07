@@ -9,11 +9,6 @@ namespace Hire_Hop_Interface.Objects
 
         private JObject data;
 
-        public JObject Data
-        {
-            get { return data; }
-        }
-
         #endregion Fields
 
         #region Constructors
@@ -26,6 +21,11 @@ namespace Hire_Hop_Interface.Objects
         #endregion Constructors
 
         #region Properties
+
+        public JObject Data
+        {
+            get { return data; }
+        }
 
         public string id
         {
