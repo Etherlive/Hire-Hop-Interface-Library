@@ -90,7 +90,7 @@ namespace Hire_Hop_Interface.Requests
 
             public bool _jobs = true, _projects = false,
                            _open = true, _closed = false,
-               _money_owed = true, _is_late = true, _mine = false, _no_user = false, _needs_bill = false;
+               _money_owed = true, _is_late = false, _mine = false, _no_user = false, _needs_bill = false;
 
             public string _status = "0,1,2,3,4,5,6,7,8";
 

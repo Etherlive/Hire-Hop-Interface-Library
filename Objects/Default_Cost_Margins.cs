@@ -43,6 +43,8 @@ namespace Hire_Hop_Interface.Objects
 
                 JObject stockdata = client.__lastContentAsJson;
 
+                if (stockdata["items"] == null) return;
+
                 JToken fields = stockdata["items"][0]["CUSTOM_FIELDS"];
                 CostMargin _cm = new CostMargin()
                 {
