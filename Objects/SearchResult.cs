@@ -1,7 +1,7 @@
 ﻿using Hire_Hop_Interface.Management;
 using Newtonsoft.Json.Linq;
 
-namespace Hire_Hop_Interface.Requests
+namespace Hire_Hop_Interface.Objects
 {
     public class SearchResult
     {
@@ -21,6 +21,11 @@ namespace Hire_Hop_Interface.Requests
         #endregion Constructors
 
         #region Properties
+
+        public JObject Data
+        {
+            get { return data; }
+        }
 
         public string id
         {
@@ -54,7 +59,7 @@ namespace Hire_Hop_Interface.Requests
             if (!IsInDetail)
             {
                 if (IsJob)
-                    data = await Jobs.GetJobData(client, id.Replace("j", ""));
+                    data = await Requests.Jobs.GetJobData(client, id.Replace("j", ""));
                 else if (IsProject)
 #warning only supports loading of job detail
                     data = data;

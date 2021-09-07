@@ -1,4 +1,5 @@
 ﻿using Hire_Hop_Interface.Management;
+using Hire_Hop_Interface.Objects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
