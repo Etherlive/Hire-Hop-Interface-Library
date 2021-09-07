@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Hire_Hop_Interface.Management
+﻿namespace Hire_Hop_Interface.Management
 {
     public class TrackedIdentity
     {
         #region Fields
 
+        private string identity_str;
         public ClientConnection clientConnection = new ClientConnection();
         public User user;
-
-        private string identity_str;
 
         #endregion Fields
 

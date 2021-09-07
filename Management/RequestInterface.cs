@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace Hire_Hop_Interface.Management
 {
@@ -50,16 +50,26 @@ namespace Hire_Hop_Interface.Management
     {
         #region Fields
 
-        public static readonly string url = "https://myhirehop.com/";
-
-        public string __id;
-        public HttpResponseMessage __lastResponse;
         private HttpClient __httpClient;
         private HttpClientHandler __httpClientHandler;
 
         #endregion Fields
 
-        #region Properties
+        #region Methods
+
+        private HttpClientHandler constructHttpClient()
+        {
+            HttpClientHandler http = new HttpClientHandler();
+            http.UseCookies = true;
+            return http;
+        }
+
+        #endregion Methods
+
+        public static readonly string url = "https://myhirehop.com/";
+
+        public string __id;
+        public HttpResponseMessage __lastResponse;
 
         public CookieCollection cookies
         {
@@ -86,18 +96,5 @@ namespace Hire_Hop_Interface.Management
                 return __httpClientHandler;
             }
         }
-
-        #endregion Properties
-
-        #region Methods
-
-        private HttpClientHandler constructHttpClient()
-        {
-            HttpClientHandler http = new HttpClientHandler();
-            http.UseCookies = true;
-            return http;
-        }
-
-        #endregion Methods
     }
 }

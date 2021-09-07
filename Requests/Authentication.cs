@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Hire_Hop_Interface.Management;
+using System.Collections.Generic;
 using System.Linq;
-using Hire_Hop_Interface.Management;
+using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Requests
 {
@@ -23,7 +23,7 @@ namespace Hire_Hop_Interface.Requests
 
             var cookie = client.cookies;
 
-            return cookie.Count > 0 && cookie.Any(x=>x.Name=="id") && cookie["id"].Value != "deleted";
+            return cookie.Count > 0 && cookie.Any(x => x.Name == "id") && cookie["id"].Value != "deleted";
         }
 
         #endregion Methods
