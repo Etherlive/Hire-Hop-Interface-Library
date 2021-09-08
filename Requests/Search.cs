@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Requests
@@ -46,13 +47,14 @@ namespace Hire_Hop_Interface.Requests
 
             Task.WaitAll(pageTasks);
 
-            for (int i = 0; i < pageTasks.Length; i++)
+            var page_results = pageTasks.SelectMany(x => x.Result).ToArray();
+
+            Console.WriteLine($"Pages Returned {page_results.Length} Jobs");
+
+            foreach (KeyValuePair<string,SearchResult> pair in page_results)
             {
-                foreach (KeyValuePair<string,SearchResult> _searchResult in pageTasks[i].Result)
-                {
-                    if (!results.ContainsKey(_searchResult.Key))
-                        results.Add(_searchResult.Key, _searchResult.Value);
-                }
+                if (!results.ContainsKey(pair.Key))
+                    results.Add(pair.Key, pair.Value);
             }
 
             Console.WriteLine($"Loaded {results.Count} Jobs");
