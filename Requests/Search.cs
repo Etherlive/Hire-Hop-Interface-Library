@@ -41,8 +41,8 @@ namespace Hire_Hop_Interface.Requests
 
             Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
 
-            Task<Dictionary<string, SearchResult>>[] pageTasks = new Task<Dictionary<string, SearchResult>>[_max_page - 1];
-            for (int i = 1; i < _max_page; i++) pageTasks[i-1] = LoadPage(client, @params, i);
+            Task<Dictionary<string, SearchResult>>[] pageTasks = new Task<Dictionary<string, SearchResult>>[_max_page];
+            for (int i = 1; i <= _max_page; i++) pageTasks[i-1] = LoadPage(client, @params, i);
 
             Task.WaitAll(pageTasks);
 
