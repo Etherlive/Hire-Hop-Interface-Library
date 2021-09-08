@@ -41,23 +41,6 @@ namespace Hire_Hop_Interface.Management
 
                     client.__lastResponse = response;
                     client.__lastContent = await response.Content.ReadAsStringAsync();
-
-                    try
-                    {
-                        client.__lastContentAsJson = JObject.Parse(client.__lastContent);
-                        if (client.__lastContentAsJson.ContainsKey("error"))
-                        {
-                            throw new Exception(client.__lastContent);
-                        }
-                    }
-                    catch (JsonReaderException e)
-                    {
-                        //Not JSON
-                    }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
                 }
                 catch (Exception e)
                 {
@@ -97,7 +80,20 @@ namespace Hire_Hop_Interface.Management
         public static readonly string url = "https://myhirehop.com/";
 
         public string __id, __lastContent;
-        public JObject __lastContentAsJson;
+        public JObject __lastContentAsJson
+        {
+            get
+            {
+                try
+                {
+                    return JObject.Parse(__lastContent);
+                }
+                catch
+                {
+                    return new JObject();
+                }
+            }
+        }
         public HttpResponseMessage __lastResponse;
 
         public CookieCollection cookies

@@ -37,8 +37,11 @@ namespace Hire_Hop_Interface.Objects
         public async Task<Costs> CalculateCosts(ClientConnection client)
         {
             JArray items = await Requests.Jobs.GetJobItems(client, id);
-            Task.WaitAny(Default_Cost_Margins.Load(client, items));
             Costs _costs = new Costs();
+
+            if (items == null) return _costs;
+
+            Task.WaitAny(Default_Cost_Margins.Load(client, items));
 
             foreach (JToken item in items)
             {
