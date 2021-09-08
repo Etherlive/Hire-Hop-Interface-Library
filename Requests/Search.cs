@@ -55,6 +55,8 @@ namespace Hire_Hop_Interface.Requests
             {
                 if (!results.ContainsKey(pair.Key))
                     results.Add(pair.Key, pair.Value);
+                else
+                    Console.WriteLine($"Skipped Duplicate Key {pair.Key}");
             }
 
             Console.WriteLine($"Loaded {results.Count} Jobs");
