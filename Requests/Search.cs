@@ -3,6 +3,7 @@ using Hire_Hop_Interface.Objects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Requests
@@ -30,13 +31,6 @@ namespace Hire_Hop_Interface.Requests
                     if (!results.ContainsKey(rId))
                     {
                         results.Add(rId, result);
-
-                        if (LoadInDetail)
-                        {
-                            result.data = await result.LoadDetail(client);
-
-                            Console.WriteLine($"Loaded job detail {rId}");
-                        }
                     }
                 }
 
@@ -44,6 +38,23 @@ namespace Hire_Hop_Interface.Requests
 
                 if (_page >= _max_page) break;
                 else jobs = await Search.LookFor(client, @params);
+            }
+
+            Console.WriteLine("Loaded Jobs");
+
+            if (LoadInDetail)
+            {
+                var tasks = results.Select(x => x.Value.LoadDetail(client)).ToArray();
+                Task.WaitAll(tasks);
+
+                int idx = 0;
+                foreach (KeyValuePair<string, SearchResult> result in results)
+                {
+                    result.Value.data = tasks[idx].Result;
+                    idx++;
+                }
+
+                Console.WriteLine("Loaded Detail");
             }
 
             return results;
