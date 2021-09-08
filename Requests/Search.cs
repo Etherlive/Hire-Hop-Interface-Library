@@ -11,67 +11,52 @@ namespace Hire_Hop_Interface.Requests
 {
     public static class Search
     {
-        #region Methods
+        #region Method
 
-        private static async Task<Dictionary<string,SearchResult>> LoadPage(ClientConnection client, SearchParams @params, int page)
-        {
-            @params._page = page;
-            JObject jobs = await Search.LookFor(client, @params);
-
-            Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
-
-            foreach (JObject resultRow in jobs["rows"])
-            {
-                string rId = resultRow["id"].ToString();
-                SearchResult result = new SearchResult(resultRow["cell"]);
-                if (!results.ContainsKey(rId))
-                {
-                    results.Add(rId, result);
-                }
-            }
-
-            return results;
-        }
-
-        public static async Task<Dictionary<string, SearchResult>> GetAllResults(ClientConnection client, SearchParams @params, bool LoadInDetail = false)
+        public static async Task<SearchResult[]> GetAllResults(ClientConnection client, SearchParams @params, bool LoadInDetail = false)
         {
             JObject jobs = await Search.LookFor(client, @params);
             int.TryParse(jobs["total"].ToString(), out int _max_page);
 
             Console.WriteLine($"Loading Pages 1 - {_max_page}");
 
-            Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
-
-            Task<Dictionary<string, SearchResult>>[] pageTasks = new Task<Dictionary<string, SearchResult>>[_max_page];
-            for (int i = 1; i <= _max_page; i++) pageTasks[i-1] = LoadPage(client, @params, i);
-
-            Task.WaitAll(pageTasks);
-
-            var page_results = pageTasks.SelectMany(x => x.Result).ToArray();
-
-            Console.WriteLine($"Pages Returned {page_results.Length} Jobs");
-
-            foreach (KeyValuePair<string,SearchResult> pair in page_results)
+            Task<JObject>[] job_page_tasks = new Task<JObject>[_max_page];
+            for (int i = 1; i <= _max_page; i++)
             {
-                if (!results.ContainsKey(pair.Key))
-                    results.Add(pair.Key, pair.Value);
-                else
-                    Console.WriteLine($"Skipped Duplicate Key {pair.Key}");
+                @params._page = i;
+                job_page_tasks[i-1] = Search.LookFor(client, @params);
+            }
+            Task.WaitAll(job_page_tasks);
+
+            JToken[] job_data = job_page_tasks.SelectMany(x => x.Result["rows"].Children()).ToArray();
+
+            Console.WriteLine($"Pages Returned {job_data.Length} Jobs");
+
+            //var results = job_data.Select(x => new SearchResult(x["cell"])).ToArray();
+
+            List<SearchResult> list_results = new List<SearchResult>();
+            foreach (JToken x in job_data)
+            {
+                SearchResult res = new SearchResult(x["cell"]);
+                if (!list_results.Any(z=>z.id==res.id))
+                    list_results.Add(res);
             }
 
-            Console.WriteLine($"Loaded {results.Count} Jobs");
+            var results = list_results.ToArray();
+
+            Console.WriteLine($"Loaded {results.Length} Jobs");
 
             if (LoadInDetail)
             {
                 Console.WriteLine("Loading Extra Detail");
 
-                var tasks = results.Select(x => x.Value.LoadDetail(client)).ToArray();
+                var tasks = results.Select(x => x.LoadDetail(client)).ToArray();
                 Task.WaitAll(tasks);
 
                 int idx = 0;
-                foreach (KeyValuePair<string, SearchResult> result in results)
+                foreach (SearchResult result in results)
                 {
-                    result.Value.data = tasks[idx].Result;
+                    result.data = tasks[idx].Result;
                     idx++;
                 }
 
