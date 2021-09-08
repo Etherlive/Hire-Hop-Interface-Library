@@ -33,7 +33,7 @@ namespace Hire_Hop_Interface.Requests
 
                         if (LoadInDetail)
                         {
-                            if (rId.StartsWith("j")) result.LoadInDetail(client);
+                            result.data = await result.LoadDetail(client);
 
                             Console.WriteLine($"Loaded job detail {rId}");
                         }

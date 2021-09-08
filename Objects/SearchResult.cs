@@ -1,5 +1,6 @@
 ﻿using Hire_Hop_Interface.Management;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
 {
@@ -7,7 +8,7 @@ namespace Hire_Hop_Interface.Objects
     {
         #region Fields
 
-        private JObject data;
+        public JObject data;
 
         #endregion Fields
 
@@ -21,11 +22,6 @@ namespace Hire_Hop_Interface.Objects
         #endregion Constructors
 
         #region Properties
-
-        public JObject Data
-        {
-            get { return data; }
-        }
 
         public string id
         {
@@ -54,16 +50,15 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public async void LoadInDetail(ClientConnection client)
+        public async Task<JObject> LoadDetail(ClientConnection client)
         {
             if (!IsInDetail)
             {
                 if (IsJob)
-                    data = await Requests.Jobs.GetJobData(client, id.Replace("j", ""));
-                else if (IsProject)
+                    return await Requests.Jobs.GetJobData(client, id.Replace("j", ""));
 #warning only supports loading of job detail
-                    data = data;
             }
+            return data;
         }
 
         #endregion Methods

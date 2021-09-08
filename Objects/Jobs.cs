@@ -18,7 +18,7 @@ namespace Hire_Hop_Interface.Objects
 
         public Jobs(SearchResult searchResult)
         {
-            Data = searchResult.Data;
+            Data = searchResult.data;
         }
 
         #endregion Constructors
