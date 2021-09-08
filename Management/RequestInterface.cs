@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -80,6 +79,8 @@ namespace Hire_Hop_Interface.Management
         public static readonly string url = "https://myhirehop.com/";
 
         public string __id, __lastContent;
+        public HttpResponseMessage __lastResponse;
+
         public JObject __lastContentAsJson
         {
             get
@@ -94,7 +95,6 @@ namespace Hire_Hop_Interface.Management
                 }
             }
         }
-        public HttpResponseMessage __lastResponse;
 
         public CookieCollection cookies
         {
