@@ -40,10 +40,12 @@ namespace Hire_Hop_Interface.Requests
                 else jobs = await Search.LookFor(client, @params);
             }
 
-            Console.WriteLine("Loaded Jobs");
+            Console.WriteLine($"Loaded {results.Count} Jobs");
 
             if (LoadInDetail)
             {
+                Console.WriteLine("Loading Extra Detail");
+
                 var tasks = results.Select(x => x.Value.LoadDetail(client)).ToArray();
                 Task.WaitAll(tasks);
 
