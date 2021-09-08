@@ -12,32 +12,47 @@ namespace Hire_Hop_Interface.Requests
     {
         #region Methods
 
+        private static async Task<Dictionary<string,SearchResult>> LoadPage(ClientConnection client, SearchParams @params, int page)
+        {
+            @params._page = page;
+            JObject jobs = await Search.LookFor(client, @params);
+
+            Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
+
+            foreach (JObject resultRow in jobs["rows"])
+            {
+                string rId = resultRow["id"].ToString();
+                SearchResult result = new SearchResult(resultRow["cell"]);
+                if (!results.ContainsKey(rId))
+                {
+                    results.Add(rId, result);
+                }
+            }
+
+            return results;
+        }
+
         public static async Task<Dictionary<string, SearchResult>> GetAllResults(ClientConnection client, SearchParams @params, bool LoadInDetail = false)
         {
             JObject jobs = await Search.LookFor(client, @params);
             int.TryParse(jobs["total"].ToString(), out int _max_page);
 
+            Console.WriteLine($"Loading Pages 1 - {_max_page}");
+
             Dictionary<string, SearchResult> results = new Dictionary<string, SearchResult>();
 
-            while (true)
+            Task<Dictionary<string, SearchResult>>[] pageTasks = new Task<Dictionary<string, SearchResult>>[_max_page - 1];
+            for (int i = 1; i < _max_page; i++) pageTasks[i-1] = LoadPage(client, @params, i);
+
+            Task.WaitAll(pageTasks);
+
+            for (int i = 0; i < pageTasks.Length; i++)
             {
-                int.TryParse(jobs["page"].ToString(), out int _page);
-
-                Console.WriteLine($"Loading page {_page} / {_max_page}");
-                foreach (JObject resultRow in jobs["rows"])
+                foreach (KeyValuePair<string,SearchResult> _searchResult in pageTasks[i].Result)
                 {
-                    string rId = resultRow["id"].ToString();
-                    SearchResult result = new SearchResult(resultRow["cell"]);
-                    if (!results.ContainsKey(rId))
-                    {
-                        results.Add(rId, result);
-                    }
+                    if (!results.ContainsKey(_searchResult.Key))
+                        results.Add(_searchResult.Key, _searchResult.Value);
                 }
-
-                @params._page++;
-
-                if (_page >= _max_page) break;
-                else jobs = await Search.LookFor(client, @params);
             }
 
             Console.WriteLine($"Loaded {results.Count} Jobs");
