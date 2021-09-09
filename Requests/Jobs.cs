@@ -2,12 +2,34 @@
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace Hire_Hop_Interface.Requests
 {
     public static class Jobs
     {
         #region Methods
+
+        public static async Task<JObject> GetJobBill(ClientConnection client, string jobId)
+        {
+            string date_str = $"{ DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
+
+            client = await RequestInterface.SendRequest(client, "php_functions/billing_list.php", queryList: new List<string>()
+            {
+                $"main_id={jobId}",
+                "type=1",
+                $"local={date_str}",
+                "tz=Europe/London",
+                "fix=0",
+                "_search=false",
+                "nd=1630575681100",
+                "rows=10000",
+                "page=1",
+                "sidx=",
+                "sord=asc"
+            });
+            return client.__lastContentAsJson;
+        }
 
         public static async Task<JObject> GetJobData(ClientConnection client, string jobId)
         {

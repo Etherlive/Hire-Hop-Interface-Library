@@ -10,7 +10,25 @@ namespace Hire_Hop_Interface.Requests
     {
         #region Methods
 
-        public static Objects.Job[] CalculateCosts(ref Objects.Job[] jobs, ClientConnection client)
+        public static void CalculateBilling(ref Objects.Job[] jobs, ClientConnection client)
+        {
+            Console.WriteLine("Calculating Bills");
+
+            var loadTasks = jobs.Select(x => x.CalculateBilling(client)).ToArray();
+
+            Task.WaitAll(loadTasks);
+
+            int idx = 0;
+            foreach (Hire_Hop_Interface.Objects.Job j in jobs)
+            {
+                j.bill = loadTasks[idx].Result;
+                idx++;
+            }
+
+            Console.WriteLine("Calculated Bills");
+        }
+
+        public static void CalculateCosts(ref Objects.Job[] jobs, ClientConnection client)
         {
             Console.WriteLine("Calculating Costs");
 
@@ -26,11 +44,9 @@ namespace Hire_Hop_Interface.Requests
             }
 
             Console.WriteLine("Calculated Costs");
-
-            return jobs;
         }
 
-        public static SearchResult[] LoadExtraDetail(SearchResult[] results, ClientConnection client)
+        public static void LoadExtraDetail(ref SearchResult[] results, ClientConnection client)
         {
             Console.WriteLine("Loading Extra Detail");
 
@@ -45,7 +61,6 @@ namespace Hire_Hop_Interface.Requests
             }
 
             Console.WriteLine("Loaded Detail");
-            return results;
         }
 
         public static Hire_Hop_Interface.Objects.Job[] SearchToJob(SearchResult[] results)

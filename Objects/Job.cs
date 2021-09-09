@@ -10,6 +10,7 @@ namespace Hire_Hop_Interface.Objects
         #region Fields
 
         public Costs costs;
+        public Bill bill;
         public JObject Data;
 
         #endregion Fields
@@ -33,6 +34,38 @@ namespace Hire_Hop_Interface.Objects
         #endregion Properties
 
         #region Methods
+
+        public class Bill
+        {
+            public float accrued, totalCredit, totalDebit;
+        }
+
+        public async Task<Bill> CalculateBilling(ClientConnection client)
+        {
+            Bill _bill = new Bill();
+
+            JObject bill_data = await Requests.Jobs.GetJobBill(client, id);
+
+            foreach (JToken item in bill_data["rows"])
+            {
+                switch (item["kind"].ToString())
+                {
+                    case "0":
+                        _bill.accrued = float.Parse(item["accrued"].ToString());
+                        break;
+
+                    case "1":
+                        _bill.totalDebit += float.Parse(item["debit"].ToString());
+                        break;
+
+                    case "2":
+                        _bill.totalCredit += float.Parse(item["credit"].ToString());
+                        break;
+                }
+            }
+
+            return _bill;
+        }
 
         public async Task<Costs> CalculateCosts(ClientConnection client)
         {
