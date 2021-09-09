@@ -9,8 +9,8 @@ namespace Hire_Hop_Interface.Objects
     {
         #region Fields
 
-        public Costs costs;
         public Bill bill;
+        public Costs costs;
         public JObject Data;
 
         #endregion Fields
@@ -35,11 +35,6 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public class Bill
-        {
-            public float accrued, totalCredit, totalDebit;
-        }
-
         public async Task<Bill> CalculateBilling(ClientConnection client)
         {
             Bill _bill = new Bill();
@@ -60,6 +55,14 @@ namespace Hire_Hop_Interface.Objects
 
                     case "2":
                         _bill.totalCredit += float.Parse(item["credit"].ToString());
+                        break;
+
+                    case "3":
+                        _bill.totalCredit += float.Parse(item["credit"].ToString());
+                        break;
+
+                    default:
+
                         break;
                 }
             }
@@ -138,6 +141,15 @@ namespace Hire_Hop_Interface.Objects
         #endregion Methods
 
         #region Classes
+
+        public class Bill
+        {
+            #region Fields
+
+            public float accrued, totalCredit, totalDebit;
+
+            #endregion Fields
+        }
 
         public class Costs
         {

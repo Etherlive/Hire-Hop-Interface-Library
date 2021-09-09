@@ -24,8 +24,8 @@ namespace Hire_Hop_Interface.Management
                 urlPath = QueryHelpers.AddQueryString(urlPath, queryList.ToDictionary(x => x.Split("=")[0], x => x.Split("=")[1]));
             }
 
-            // In production code, don't destroy the HttpClient through using, but better reuse an existing instance
-            // https://www.aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
+            // In production code, don't destroy the HttpClient through using, but better reuse an
+            // existing instance https://www.aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
             using (var request = new HttpRequestMessage(new HttpMethod(method), $"{ClientConnection.url}{urlPath}"))
             {
                 if (contentList != null)
