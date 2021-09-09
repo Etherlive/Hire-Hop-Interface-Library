@@ -14,6 +14,8 @@ namespace Hire_Hop_Interface.Requests
 
         public static async Task<SearchResult[]> GetAllResults(ClientConnection client, SearchParams @params)
         {
+            Console.WriteLine("Init Search");
+
             JObject jobs = await Search.LookFor(client, @params);
             int.TryParse(jobs["total"].ToString(), out int _max_page);
 

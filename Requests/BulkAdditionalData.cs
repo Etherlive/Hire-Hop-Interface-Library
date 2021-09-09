@@ -24,8 +24,6 @@ namespace Hire_Hop_Interface.Requests
                 j.bill = loadTasks[idx].Result;
                 idx++;
             }
-
-            Console.WriteLine("Calculated Bills");
         }
 
         public static void CalculateCosts(ref Objects.Job[] jobs, ClientConnection client)
