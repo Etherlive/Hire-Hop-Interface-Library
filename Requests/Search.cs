@@ -12,7 +12,7 @@ namespace Hire_Hop_Interface.Requests
     {
         #region Methods
 
-        public static async Task<SearchResult[]> GetAllResults(ClientConnection client, SearchParams @params, bool LoadInDetail = false)
+        public static async Task<SearchResult[]> GetAllResults(ClientConnection client, SearchParams @params)
         {
             JObject jobs = await Search.LookFor(client, @params);
             int.TryParse(jobs["total"].ToString(), out int _max_page);
@@ -31,8 +31,6 @@ namespace Hire_Hop_Interface.Requests
 
             Console.WriteLine($"Pages Returned {job_data.Length} Jobs");
 
-            //var results = job_data.Select(x => new SearchResult(x["cell"])).ToArray();
-
             List<SearchResult> list_results = new List<SearchResult>();
             foreach (JToken x in job_data)
             {
@@ -46,23 +44,6 @@ namespace Hire_Hop_Interface.Requests
             var results = list_results.ToArray();
 
             Console.WriteLine($"Loaded {results.Length} Jobs");
-
-            if (LoadInDetail)
-            {
-                Console.WriteLine("Loading Extra Detail");
-
-                var tasks = results.Select(x => x.LoadDetail(client)).ToArray();
-                Task.WaitAll(tasks);
-
-                int idx = 0;
-                foreach (SearchResult result in results)
-                {
-                    result.data = tasks[idx].Result;
-                    idx++;
-                }
-
-                Console.WriteLine("Loaded Detail");
-            }
 
             return results;
         }

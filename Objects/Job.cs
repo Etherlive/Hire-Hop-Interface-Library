@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
 {
-    public class Jobs
+    public class Job
     {
         #region Fields
 
@@ -16,7 +16,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Constructors
 
-        public Jobs(SearchResult searchResult)
+        public Job(SearchResult searchResult)
         {
             Data = searchResult.data;
         }
