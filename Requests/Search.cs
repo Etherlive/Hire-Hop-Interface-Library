@@ -19,7 +19,7 @@ namespace Hire_Hop_Interface.Requests
             JObject jobs = await Search.LookFor(client, @params);
             int.TryParse(jobs["total"].ToString(), out int _max_page);
 
-            Console.WriteLine($"Loading Pages 1 - {_max_page}");
+            Console.WriteLine($"Loading Pages 1 - {_max_page} ...");
 
             Task<JObject>[] job_page_tasks = new Task<JObject>[_max_page];
             for (int i = 1; i <= _max_page; i++)

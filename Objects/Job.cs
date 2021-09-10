@@ -12,6 +12,7 @@ namespace Hire_Hop_Interface.Objects
         public Bill bill;
         public Costs costs;
         public JObject Data;
+        public string lastModified;
 
         #endregion Fields
 
@@ -34,6 +35,12 @@ namespace Hire_Hop_Interface.Objects
         #endregion Properties
 
         #region Methods
+
+        public async Task<string> GetLastModified(ClientConnection client)
+        {
+            JObject changes = await Requests.Jobs.GetJobHistory(client, id);
+            return changes["rows"][0]["cell"]["date_time"].ToString();
+        }
 
         public async Task<Bill> CalculateBilling(ClientConnection client)
         {
