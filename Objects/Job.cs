@@ -39,7 +39,12 @@ namespace Hire_Hop_Interface.Objects
         public async Task<string> GetLastModified(ClientConnection client)
         {
             JObject changes = await Requests.Jobs.GetJobHistory(client, id);
-            return changes["rows"][0]["cell"]["date_time"].ToString();
+            if (changes["rows"][0]["cell"] != null)
+            {
+                var date = changes["rows"][0]["cell"]["date_time"];
+                return date != null ? date.ToString() : null;
+            }
+            return null;
         }
 
         public async Task<Bill> CalculateBilling(ClientConnection client)
@@ -48,29 +53,35 @@ namespace Hire_Hop_Interface.Objects
 
             JObject bill_data = await Requests.Jobs.GetJobBill(client, id);
 
-            foreach (JToken item in bill_data["rows"])
+            if (bill_data.Count > 0)
             {
-                switch (item["kind"].ToString())
+                foreach (JToken item in bill_data["rows"])
                 {
-                    case "0":
-                        _bill.accrued = float.Parse(item["accrued"].ToString());
-                        break;
+                    if (item["kind"] != null)
+                    {
+                        switch (item["kind"].ToString())
+                        {
+                            case "0":
+                                _bill.accrued = float.Parse(item["accrued"].ToString());
+                                break;
 
-                    case "1":
-                        _bill.totalDebit += float.Parse(item["debit"].ToString());
-                        break;
+                            case "1":
+                                _bill.totalDebit += float.Parse(item["debit"].ToString());
+                                break;
 
-                    case "2":
-                        _bill.totalCredit += float.Parse(item["credit"].ToString());
-                        break;
+                            case "2":
+                                _bill.totalCredit += float.Parse(item["credit"].ToString());
+                                break;
 
-                    case "3":
-                        _bill.totalCredit += float.Parse(item["credit"].ToString());
-                        break;
+                            case "3":
+                                _bill.totalCredit += float.Parse(item["credit"].ToString());
+                                break;
 
-                    default:
+                            default:
 
-                        break;
+                                break;
+                        }
+                    }
                 }
             }
 
