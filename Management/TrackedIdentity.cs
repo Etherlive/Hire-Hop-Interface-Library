@@ -4,9 +4,9 @@
     {
         #region Fields
 
-        private string identity_str;
         public ClientConnection clientConnection = new ClientConnection();
         public User user;
+        private string identity_str;
 
         #endregion Fields
 

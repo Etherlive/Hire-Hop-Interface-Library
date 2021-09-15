@@ -10,22 +10,6 @@ namespace Hire_Hop_Interface.Requests
     {
         #region Methods
 
-        public static async Task<JObject> GetJobHistory(ClientConnection client, string jobId)
-        {
-            client = await RequestInterface.SendRequest(client, "php_functions/log_list.php", queryList: new List<string>()
-            {
-                $"main_id={jobId}",
-                "type=1",
-                "_search=false",
-                "nd=1631267281622",
-                "rows=100",
-                "page=1",
-                "sidx=date_time",
-                "sord=desc"
-            });
-            return client.__lastContentAsJson;
-        }
-
         public static async Task<JObject> GetJobBill(ClientConnection client, string jobId)
         {
             string date_str = $"{ DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
@@ -52,6 +36,22 @@ namespace Hire_Hop_Interface.Requests
             client = await RequestInterface.SendRequest(client, "php_functions/job_refresh.php", contentList: new List<string>()
             {
                 $"job={jobId}"
+            });
+            return client.__lastContentAsJson;
+        }
+
+        public static async Task<JObject> GetJobHistory(ClientConnection client, string jobId)
+        {
+            client = await RequestInterface.SendRequest(client, "php_functions/log_list.php", queryList: new List<string>()
+            {
+                $"main_id={jobId}",
+                "type=1",
+                "_search=false",
+                "nd=1631267281622",
+                "rows=100",
+                "page=1",
+                "sidx=date_time",
+                "sord=desc"
             });
             return client.__lastContentAsJson;
         }

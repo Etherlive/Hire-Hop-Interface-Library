@@ -8,7 +8,28 @@ namespace Hire_Hop_Interface.Objects
 {
     public static class Default_Cost_Margins
     {
+        #region Fields
+
+        public static Dictionary<string, CostMargin> inventory_cost_margins = new Dictionary<string, CostMargin>();
+
+        public static Dictionary<string, CostMargin> labour_cost_margins = new Dictionary<string, CostMargin>();
+
+        #endregion Fields
+
         #region Methods
+
+        public static async Task Load(ClientConnection client, JArray job_items)
+        {
+            if (inventory_cost_margins.Count == 0 && labour_cost_margins.Count == 0)
+            {
+                await LabourData.Load(client);
+
+                JObject data = client.__lastContentAsJson;
+
+                Task.WaitAll(job_items.Select(x => LoadRow(x, client)).ToArray());
+            }
+            return;
+        }
 
         private static async Task LoadRow(JToken item, ClientConnection client)
         {
@@ -57,26 +78,7 @@ namespace Hire_Hop_Interface.Objects
 
         #endregion Methods
 
-        #region Fields
-
-        public static Dictionary<string, CostMargin> inventory_cost_margins = new Dictionary<string, CostMargin>();
-
-        public static Dictionary<string, CostMargin> labour_cost_margins = new Dictionary<string, CostMargin>();
-
-        #endregion Fields
-
-        public static async Task Load(ClientConnection client, JArray job_items)
-        {
-            if (inventory_cost_margins.Count == 0 && labour_cost_margins.Count == 0)
-            {
-                await LabourData.Load(client);
-
-                JObject data = client.__lastContentAsJson;
-
-                Task.WaitAll(job_items.Select(x => LoadRow(x, client)).ToArray());
-            }
-            return;
-        }
+        #region Classes
 
         public class CostMargin
         {
@@ -86,5 +88,7 @@ namespace Hire_Hop_Interface.Objects
 
             #endregion Fields
         }
+
+        #endregion Classes
     }
 }

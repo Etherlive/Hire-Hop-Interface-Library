@@ -9,23 +9,6 @@ namespace Hire_Hop_Interface.Requests
     public static class BulkAdditionalData
     {
         #region Methods
-        public static void SetLastModified(ref Objects.Job[] jobs, ClientConnection client)
-        {
-            Console.WriteLine("Getting Last Modified ...");
-
-            var loadTasks = jobs.Select(x => x.GetLastModified(client)).ToArray();
-
-            Task.WaitAll(loadTasks);
-
-            int idx = 0;
-            foreach (Hire_Hop_Interface.Objects.Job j in jobs)
-            {
-                j.lastModified = loadTasks[idx].Result;
-                idx++;
-            }
-
-            Console.WriteLine("Set Last Modified");
-        }
 
         public static void CalculateBilling(ref Objects.Job[] jobs, ClientConnection client)
         {
@@ -83,6 +66,24 @@ namespace Hire_Hop_Interface.Requests
         public static Hire_Hop_Interface.Objects.Job[] SearchToJob(SearchResult[] results)
         {
             return results.Select(x => new Hire_Hop_Interface.Objects.Job(x)).ToArray();
+        }
+
+        public static void SetLastModified(ref Objects.Job[] jobs, ClientConnection client)
+        {
+            Console.WriteLine("Getting Last Modified ...");
+
+            var loadTasks = jobs.Select(x => x.GetLastModified(client)).ToArray();
+
+            Task.WaitAll(loadTasks);
+
+            int idx = 0;
+            foreach (Hire_Hop_Interface.Objects.Job j in jobs)
+            {
+                j.lastModified = loadTasks[idx].Result;
+                idx++;
+            }
+
+            Console.WriteLine("Set Last Modified");
         }
 
         #endregion Methods

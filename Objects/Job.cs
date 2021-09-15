@@ -36,17 +36,6 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public async Task<string> GetLastModified(ClientConnection client)
-        {
-            JObject changes = await Requests.Jobs.GetJobHistory(client, id);
-            if (changes["rows"][0]["cell"] != null)
-            {
-                var date = changes["rows"][0]["cell"]["date_time"];
-                return date != null ? date.ToString() : null;
-            }
-            return null;
-        }
-
         public async Task<Bill> CalculateBilling(ClientConnection client)
         {
             Bill _bill = new Bill();
@@ -154,6 +143,17 @@ namespace Hire_Hop_Interface.Objects
             }
             _costs.totalCost = _costs.equipmentCost + _costs.resourceCost + _costs.serviceCost;
             return _costs;
+        }
+
+        public async Task<string> GetLastModified(ClientConnection client)
+        {
+            JObject changes = await Requests.Jobs.GetJobHistory(client, id);
+            if (changes["rows"][0]["cell"] != null)
+            {
+                var date = changes["rows"][0]["cell"]["date_time"];
+                return date != null ? date.ToString() : null;
+            }
+            return null;
         }
 
         #endregion Methods
