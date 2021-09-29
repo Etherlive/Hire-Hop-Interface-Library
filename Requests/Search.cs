@@ -77,6 +77,7 @@ namespace Hire_Hop_Interface.Requests
             };
 
             if (@params._depot != -1) query.Add($"DEPOT={@params._depot}");
+            if (@params._job_name != null) query.Add($"JOB_NAME={@params._job_name}");
 
             client = await RequestInterface.SendRequest(client, "frames/search_field_results.php", queryList: query);
             return client.__lastContentAsJson;
@@ -97,7 +98,7 @@ namespace Hire_Hop_Interface.Requests
                            _open = true, _closed = false, _search = true,
                _money_owed = false, _is_late = false, _mine = false, _no_user = false, _needs_bill = false;
 
-            public string _status = "0,1,2,3,4,5,6,7,8";
+            public string _status = "0,1,2,3,4,5,6,7,8", _job_name = null;
 
             #endregion Fields
         }
