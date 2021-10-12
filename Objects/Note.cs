@@ -30,12 +30,41 @@ namespace Hire_Hop_Interface.Objects
 
         #endregion Constructors
 
+        #region Properties
+
+        public int id
+        {
+            get { return int.Parse(Data["id"].ToString()); }
+        }
+
+        public int jobId
+        {
+            get { return int.Parse(Data["main_id"].ToString()); }
+        }
+
+        public string note
+        {
+            get { return Data["note"].ToString(); }
+        }
+
+        public string username
+        {
+            get { return Data["username"].ToString(); }
+        }
+
+        #endregion Properties
+
         #region Methods
 
         public static async Task<Note[]> GetNotes(ClientConnection client, string jobid, int page = 1)
         {
             JObject data = await Requests.Note.GetJobNotes(client, jobid, page);
             return data["rows"].Select(x => new Note(x["cell"])).ToArray();
+        }
+
+        public async void Save(ClientConnection client)
+        {
+            Data = await Requests.Note.AddJobNote(client, this.jobId.ToString(), note, id);
         }
 
         #endregion Methods

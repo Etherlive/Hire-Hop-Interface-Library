@@ -10,11 +10,11 @@ namespace Hire_Hop_Interface.Requests
     {
         #region Methods
 
-        public static async Task<JObject> AddJobTask(ClientConnection client, string jobId, string summary, DateTime start, DateTime due, int status, int priority)
+        public static async Task<JObject> AddJobTask(ClientConnection client, string jobId, string summary, DateTime start, DateTime due, int status, int priority, int id = 0)
         {
             client = await RequestInterface.SendRequest(client, "php_functions/todo_save.php", contentList: new List<string>()
             {
-                "id=0",
+                $"id={id}",
                 $"main_id={jobId}",
                 "type=1",
                 $"summary={summary}",
