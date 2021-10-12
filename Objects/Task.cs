@@ -1,9 +1,8 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Hire_Hop_Interface.Management;
 using Newtonsoft.Json.Linq;
-using Hire_Hop_Interface.Management;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
 {
