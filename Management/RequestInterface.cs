@@ -63,6 +63,7 @@ namespace Hire_Hop_Interface.Management
         public static readonly string url = "https://myhirehop.com/";
         public string __id, __lastContent;
         public HttpResponseMessage __lastResponse;
+        public JObject userData;
         private HttpClient __httpClient;
         private HttpClientHandler __httpClientHandler;
 
@@ -109,6 +110,11 @@ namespace Hire_Hop_Interface.Management
                 __httpClientHandler = __httpClientHandler == null ? constructHttpClient() : __httpClientHandler;
                 return __httpClientHandler;
             }
+        }
+
+        public int uid
+        {
+            get { return int.Parse(userData["ID"].ToString()); }
         }
 
         #endregion Properties

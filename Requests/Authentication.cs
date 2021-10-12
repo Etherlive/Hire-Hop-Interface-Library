@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Hire_Hop_Interface.Requests
 {
@@ -20,6 +21,20 @@ namespace Hire_Hop_Interface.Requests
             {
                 "loc=home.php", $"code={companyId}", "rem=1", $"username={username}", $"password={password}"
             });
+
+            int startOfUData = client.__lastContent.IndexOf("var user=") + 9;
+
+            int endOfUData = client.__lastContent.IndexOf(";var check_server=");
+
+            string uData = client.__lastContent.Substring(startOfUData, endOfUData - startOfUData);
+
+            try
+            {
+                client.userData = JObject.Parse(uData);
+            }
+            catch
+            {
+            }
 
             var cookie = client.cookies;
 
