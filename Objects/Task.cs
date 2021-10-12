@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Hire_Hop_Interface.Management;
+using System;
 
 namespace Hire_Hop_Interface.Objects
 {
@@ -19,6 +20,13 @@ namespace Hire_Hop_Interface.Objects
         public Tasks(JToken _data)
         {
             Data = (JObject)_data;
+        }
+
+        public Tasks(ClientConnection client, string jobid, string summary, DateTime start, DateTime due, int status, int priority)
+        {
+            var addTask = Requests.Tasks.AddJobTask(client, jobid, summary, start, due, status, priority);
+            addTask.Wait();
+            Data = (JObject)addTask.Result["rows"]["0"]["cell"];
         }
 
         #endregion Constructors
