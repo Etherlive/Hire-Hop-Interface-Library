@@ -65,6 +65,25 @@ namespace Hire_Hop_Interface.Requests
             return (JArray)client.__lastContentAsJson["items"];
         }
 
+        public static async Task<JObject> SaveCustomFields(ClientConnection client, string jobId, List<Objects.JobCustomField> customFields)
+        {
+            var content = new List<string>()
+            {
+                $"main_id={jobId}"
+            };
+
+            customFields.ForEach(x =>
+            {
+                string pre = $"fields[ethl_custom_fields][value][{x.id}]";
+                content.Add($"{pre}[id]={x.id}");
+                content.Add($"{pre}[key]={x.key}");
+                content.Add($"{pre}[value]={x.value}");
+            });
+
+            client = await RequestInterface.SendRequest(client, "php_functions/job_save.php", contentList: content);
+            return client.__lastContentAsJson;
+        }
+
         #endregion Methods
     }
 }

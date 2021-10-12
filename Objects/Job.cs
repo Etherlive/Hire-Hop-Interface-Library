@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Hire_Hop_Interface.Objects
 {
@@ -11,6 +12,7 @@ namespace Hire_Hop_Interface.Objects
 
         public Bill bill;
         public Costs costs;
+        public JobCustomField[] customField;
         public JObject Data;
         public string lastModified;
 
@@ -21,6 +23,12 @@ namespace Hire_Hop_Interface.Objects
         public Job(SearchResult searchResult)
         {
             Data = searchResult.data;
+
+            if (Data.ContainsKey("fields") && Data["fields"]["ethl_custom_fields"] != null)
+            {
+                var customFields = Data["fields"]["ethl_custom_fields"]["value"];
+                customField = customFields.Select(x => new JobCustomField(x)).ToArray();
+            }
         }
 
         #endregion Constructors
@@ -179,5 +187,25 @@ namespace Hire_Hop_Interface.Objects
         }
 
         #endregion Classes
+    }
+
+    public class JobCustomField
+    {
+        #region Fields
+
+        public string id, key, value;
+
+        #endregion Fields
+
+        #region Constructors
+
+        public JobCustomField(JToken data)
+        {
+            id = data["id"].ToString();
+            key = data["key"].ToString();
+            value = data["value"].ToString();
+        }
+
+        #endregion Constructors
     }
 }
