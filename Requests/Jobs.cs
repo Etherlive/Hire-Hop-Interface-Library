@@ -10,7 +10,7 @@ namespace Hire_Hop_Interface.Requests
     {
         #region Methods
 
-        public static async Task<JObject> GetJobBill(ClientConnection client, string jobId)
+        public static async Task<JObject> GetJobBill(ClientConnection client, string jobId, int page = 1)
         {
             string date_str = $"{ DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
 
@@ -24,7 +24,7 @@ namespace Hire_Hop_Interface.Requests
                 "_search=false",
                 "nd=1630575681100",
                 "rows=10000",
-                "page=1",
+                $"page={page}",
                 "sidx=",
                 "sord=asc"
             });
@@ -40,7 +40,7 @@ namespace Hire_Hop_Interface.Requests
             return client.__lastContentAsJson;
         }
 
-        public static async Task<JObject> GetJobHistory(ClientConnection client, string jobId)
+        public static async Task<JObject> GetJobHistory(ClientConnection client, string jobId, int page = 1)
         {
             client = await RequestInterface.SendRequest(client, "php_functions/log_list.php", queryList: new List<string>()
             {
@@ -49,7 +49,7 @@ namespace Hire_Hop_Interface.Requests
                 "_search=false",
                 "nd=1631267281622",
                 "rows=100",
-                "page=1",
+                $"page={page}",
                 "sidx=date_time",
                 "sord=desc"
             });
