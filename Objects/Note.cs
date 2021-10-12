@@ -25,7 +25,7 @@ namespace Hire_Hop_Interface.Objects
         {
             var addTask = Requests.Note.AddJobNote(client, jobid, noteBody);
             addTask.Wait();
-            Data = (JObject)addTask.Result["rows"]["0"]["cell"];
+            Data = (JObject)addTask.Result["rows"][0]["cell"];
         }
 
         #endregion Constructors
