@@ -52,7 +52,7 @@ namespace Hire_Hop_Interface.Requests
 
         public static async Task<JObject> LookFor(ClientConnection client, SearchParams @params)
         {
-            string date_str = $"{ DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
+            string date_str = $"{ DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}";
 
             var query = new List<string>()
             {
@@ -79,6 +79,9 @@ namespace Hire_Hop_Interface.Requests
             if (@params._depot != -1) query.Add($"DEPOT={@params._depot}");
             if (@params._job_name != null) query.Add($"JOB_NAME={@params._job_name}");
 
+            if (@params._from.Length > 0) query.Add($"from_date={@params._from}");
+            if (@params._to.Length > 0) query.Add($"to_date={@params._to}");
+
             client = await RequestInterface.SendRequest(client, "frames/search_field_results.php", queryList: query);
             return client.__lastContentAsJson;
         }
@@ -94,8 +97,10 @@ namespace Hire_Hop_Interface.Requests
             public int _depot = 1,
                _rows = 40, _page = 1;
 
+            public string _from = "", _to = "";
+
             public bool _jobs = true, _projects = false,
-                           _open = false, _closed = false, _search = false,
+                                       _open = false, _closed = false, _search = false,
                _money_owed = false, _is_late = false, _mine = false, _no_user = false, _needs_bill = false;
 
             public string _status = "0,1,2,3,4,5,6,7,8", _job_name = null;
