@@ -21,6 +21,16 @@ namespace Hire_Hop_Interface.Requests
             return client.__lastContentAsJson;
         }
 
+        public static async Task DeleteJobNote(ClientConnection client, string jobId, int id = 0)
+        {
+            client = await RequestInterface.SendRequest(client, "php_functions/notes_delete.php", contentList: new List<string>()
+            {
+                $"id={id}",
+                $"main_id={jobId}",
+                "type=1"
+            });
+        }
+
         public static async Task<JObject> GetJobNotes(ClientConnection client, string jobId, int page = 1)
         {
             client = await RequestInterface.SendRequest(client, "php_functions/notes_list.php", queryList: new List<string>()
