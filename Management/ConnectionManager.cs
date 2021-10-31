@@ -14,6 +14,13 @@ namespace Hire_Hop_Interface.Management
 
         #region Methods
 
+        private static string rndString(uint length = 32)
+        {
+            string s = "";
+            for (uint i = 0; i < length; i++) s += (char)rnd.Next(65, 122);
+            return s.Replace("\\", "/");
+        }
+
         public static string CreateClient()
         {
             string identifier = rndString();
@@ -33,13 +40,6 @@ namespace Hire_Hop_Interface.Management
                 client = null;
                 return false;
             }
-        }
-
-        private static string rndString(uint length = 32)
-        {
-            string s = "";
-            for (uint i = 0; i < length; i++) s += (char)rnd.Next(65, 122);
-            return s.Replace("\\", "/");
         }
 
         #endregion Methods

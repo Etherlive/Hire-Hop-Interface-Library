@@ -60,16 +60,26 @@ namespace Hire_Hop_Interface.Management
     {
         #region Fields
 
-        public static readonly string url = "https://myhirehop.com/";
-        public string __id, __lastContent;
-        public HttpResponseMessage __lastResponse;
-        public JObject userData;
         private HttpClient __httpClient;
         private HttpClientHandler __httpClientHandler;
 
         #endregion Fields
 
-        #region Properties
+        #region Methods
+
+        private HttpClientHandler constructHttpClient()
+        {
+            HttpClientHandler http = new HttpClientHandler();
+            http.UseCookies = true;
+            return http;
+        }
+
+        #endregion Methods
+
+        public static readonly string url = "https://myhirehop.com/";
+        public string __id, __lastContent;
+        public HttpResponseMessage __lastResponse;
+        public JObject userData;
 
         public JObject __lastContentAsJson
         {
@@ -116,18 +126,5 @@ namespace Hire_Hop_Interface.Management
         {
             get { return int.Parse(userData["ID"].ToString()); }
         }
-
-        #endregion Properties
-
-        #region Methods
-
-        private HttpClientHandler constructHttpClient()
-        {
-            HttpClientHandler http = new HttpClientHandler();
-            http.UseCookies = true;
-            return http;
-        }
-
-        #endregion Methods
     }
 }
