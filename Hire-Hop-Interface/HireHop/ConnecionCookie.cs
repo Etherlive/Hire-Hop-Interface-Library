@@ -17,7 +17,7 @@ namespace Hire_Hop_Interface.HireHop
 
         private HttpClient constructClient()
         {
-            this._httpClient = new HttpClient(this._httpHandler);
+            this._httpClient = new HttpClient(this.httpHandler);
             return this._httpClient;
         }
 
@@ -25,6 +25,11 @@ namespace Hire_Hop_Interface.HireHop
         {
             this._httpHandler = new HttpClientHandler();
             this._httpHandler.UseCookies = true;
+
+            this._httpHandler.CookieContainer.Add(new Cookie("email", this.email, "/", Request.hhMasterDomain));
+            this._httpHandler.CookieContainer.Add(new Cookie("password", this.password, "/", Request.hhMasterDomain));
+            this._httpHandler.CookieContainer.Add(new Cookie("key", this.key, "/", Request.hhMasterDomain));
+
             return this._httpHandler;
         }
 

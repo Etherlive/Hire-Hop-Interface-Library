@@ -14,7 +14,8 @@ namespace Hire_Hop_Interface.HireHop
     {
         #region Fields
 
-        public static readonly string hhMasterUrl = "https://myhirehop.com/";
+        public static readonly string hhMasterDomain = "myhirehop.com";
+        public static readonly string hhMasterUrl = $"https://{hhMasterDomain}/";
 
         #endregion Fields
 
@@ -44,7 +45,7 @@ namespace Hire_Hop_Interface.HireHop
         {
             get
             {
-                return QueryHelpers.AddQueryString(url, urlQueryParams);
+                return urlQueryParams != null ? QueryHelpers.AddQueryString(url, urlQueryParams) : "";
             }
         }
 
@@ -85,8 +86,9 @@ namespace Hire_Hop_Interface.HireHop
                     Console.WriteLine($"An Error Occurred. Written to logs/{fname}");
                     File.WriteAllText($"./logs/{fname}.log",
                         $"{urlWP}\n{this.method}\n{request.Content}\n\n{e.ToString()}");
+
+                    throw e;
                 }
-                return null;
             }
         }
 
