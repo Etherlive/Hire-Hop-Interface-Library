@@ -35,7 +35,7 @@ namespace Hire_Hop_Interface.HireHop
 
         #endregion Methods
 
-        public string email, password, key;
+        public readonly string email, password, key;
 
         public ConnecionCookie(string _email, string _password, string _key)
         {

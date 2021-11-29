@@ -26,6 +26,9 @@ namespace Hire_Hop_Interface.HireHop
             this.connecionCookie = _connecionCookie;
             this.url = _url;
             this.method = _method;
+
+            this.urlFormValues = new Dictionary<string, string>();
+            this.urlQueryParams = new Dictionary<string, string>();
         }
 
         #endregion Constructors
@@ -45,7 +48,7 @@ namespace Hire_Hop_Interface.HireHop
         {
             get
             {
-                return urlQueryParams != null ? QueryHelpers.AddQueryString(url, urlQueryParams) : "";
+                return urlQueryParams.Count > 0 ? QueryHelpers.AddQueryString(url, urlQueryParams) : "";
             }
         }
 
@@ -53,13 +56,29 @@ namespace Hire_Hop_Interface.HireHop
 
         #region Methods
 
+        public void AddOrSetForm(string key, string val)
+        {
+            if (!urlFormValues.TryAdd(key, val))
+            {
+                urlFormValues[key] = val;
+            }
+        }
+
+        public void AddOrSetQuery(string key, string val)
+        {
+            if (!urlQueryParams.TryAdd(key, val))
+            {
+                urlQueryParams[key] = val;
+            }
+        }
+
         public async Task<Response> Execute()
         {
             string urlWP = this.urlWithParams;
 
             using (var request = new HttpRequestMessage(new HttpMethod(this.method), $"{Request.hhMasterUrl}{urlWP}"))
             {
-                if (this.urlFormValues != null)
+                if (this.urlFormValues.Count > 0)
                 {
                     request.Content = new StringContent(string.Join("&", this.urlFormValues));
                     request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
@@ -90,6 +109,16 @@ namespace Hire_Hop_Interface.HireHop
                     throw e;
                 }
             }
+        }
+
+        public bool TryGetForm(string key, out string val)
+        {
+            return urlFormValues.TryGetValue(key, out val);
+        }
+
+        public bool TryGetQuery(string key, out string val)
+        {
+            return urlQueryParams.TryGetValue(key, out val);
         }
 
         #endregion Methods

@@ -1,16 +1,28 @@
-﻿namespace Hire_Hop_Interface.HireHop
+﻿using System.Text.Json;
+
+namespace Hire_Hop_Interface.HireHop
 {
     public class Response
     {
         #region Fields
 
-        public readonly string body;
-
-        public readonly Request request;
+        private JsonElement? _json;
 
         #endregion Fields
 
-        #region Constructors
+        #region Methods
+
+        private JsonElement parseBody()
+        {
+            this._json = JsonSerializer.Deserialize<JsonElement>(this.body);
+            return this._json.Value;
+        }
+
+        #endregion Methods
+
+        public readonly string body;
+
+        public readonly Request request;
 
         public Response(Request _request, string _body)
         {
@@ -18,6 +30,9 @@
             this.request = _request;
         }
 
-        #endregion Constructors
+        public JsonElement json
+        {
+            get { return this._json.HasValue ? this._json.Value : this.parseBody(); }
+        }
     }
 }
