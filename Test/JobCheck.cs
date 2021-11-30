@@ -26,6 +26,8 @@ namespace Test
             Assert.IsTrue(req.Result);
 
             Assert.IsTrue(job.json.HasValue);
+
+            Assert.IsNotNull(job.id);
         }
 
         [TestInitialize]

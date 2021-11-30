@@ -18,10 +18,21 @@ namespace Hire_Hop_Interface.Objects
 
         public Job(string _jobId)
         {
-            this.jobId = _jobId;
+            if (_jobId.Contains("p")) throw new Exception("Id Is Of Project");
+
+            this.jobId = _jobId.Replace("j", "");
         }
 
         #endregion Constructors
+
+        #region Properties
+
+        public string id
+        {
+            get { return this.json.Value.GetProperty("ID").GetString(); }
+        }
+
+        #endregion Properties
 
         #region Methods
 
