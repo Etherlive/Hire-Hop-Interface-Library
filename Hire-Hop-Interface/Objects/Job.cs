@@ -1,7 +1,7 @@
 ﻿using Hire_Hop_Interface.HireHop;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
@@ -9,6 +9,8 @@ namespace Hire_Hop_Interface.Objects
     public class Job : JsonObject
     {
         #region Fields
+
+        private CustomField[] _customFields;
 
         private string jobId;
 
@@ -26,6 +28,11 @@ namespace Hire_Hop_Interface.Objects
         #endregion Constructors
 
         #region Properties
+
+        public CustomField[] customFields
+        {
+            get { return _customFields == null ? extractCustomFields() : _customFields; }
+        }
 
         public string id
         {
@@ -50,6 +57,28 @@ namespace Hire_Hop_Interface.Objects
             return false;
         }
 
+        private CustomField[] extractCustomFields()
+        {
+            string raw = this.json.Value.GetProperty("fields").GetProperty("ethl_custom_fields").GetProperty("value").GetRawText();
+            _customFields = JsonSerializer.Deserialize<CustomField[]>(raw);
+            return _customFields;
+        }
+
         #endregion Methods
+
+        #region Classes
+
+        public class CustomField
+        {
+            #region Properties
+
+            public string id { get; set; }
+            public string key { get; set; }
+            public string value { get; set; }
+
+            #endregion Properties
+        }
+
+        #endregion Classes
     }
 }

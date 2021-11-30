@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
 {
-    public class Search_Result : JsonObject
+    public class SearchResult : JsonObject
     {
         #region Constructors
 
-        public Search_Result(JsonElement _json)
+        public SearchResult(JsonElement _json)
         {
             this.json = _json;
         }

@@ -28,6 +28,8 @@ namespace Test
             Assert.IsTrue(job.json.HasValue);
 
             Assert.IsNotNull(job.id);
+
+            Assert.IsNotNull(job.customFields[0]);
         }
 
         [TestInitialize]
