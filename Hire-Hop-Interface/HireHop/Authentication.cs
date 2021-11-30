@@ -9,6 +9,13 @@ namespace Hire_Hop_Interface.HireHop
     {
         #region Methods
 
+        public static async Task<bool> CanReachHome(ConnectionCookie connection)
+        {
+            var req = new Request("home.php", "get", connection);
+            var res = await req.Execute();
+            return res.body.Contains("<title>HireHop</title>");
+        }
+
         public static async Task<bool> Login(ConnectionCookie connection, string username, string password, string company = "ELTH")
         {
             var req = new Request("login.php", "post", connection);

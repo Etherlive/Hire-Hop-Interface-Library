@@ -9,4 +9,8 @@
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Objects\" />
+  </ItemGroup>
+
 </Project>

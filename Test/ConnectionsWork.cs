@@ -8,7 +8,7 @@ namespace Test
     {
         #region Fields
 
-        private ConnectionCookie cookie = new ConnectionCookie("odavies%40etherlive.co.uk", "7673062c13f3471556ca61c95e747123", "9Zzfi8vnNksC");
+        private ConnectionCookie cookie = new ConnectionCookie();
 
         #endregion Fields
 
@@ -17,12 +17,11 @@ namespace Test
         [TestMethod]
         public void EnsureHomeReqWorks()
         {
-            var req = new Request("home.php", "get", cookie);
-            var res = req.Execute();
+            var req = Authentication.CanReachHome(cookie);
 
-            res.Wait();
+            req.Wait();
 
-            Assert.IsNotNull(res.Result);
+            Assert.IsTrue(req.Result);
         }
 
         [TestMethod]
@@ -37,6 +36,16 @@ namespace Test
             res.Wait();
 
             Assert.IsNotNull(res.Result.json);
+        }
+
+        [TestInitialize]
+        public void EnsureLoginWorks()
+        {
+            var req = Authentication.Login(cookie, Details.hh_email, Details.hh_password);
+
+            req.Wait();
+
+            Assert.IsTrue(req.Result);
         }
 
         #endregion Methods

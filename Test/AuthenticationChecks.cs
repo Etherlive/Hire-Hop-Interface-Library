@@ -20,7 +20,7 @@ namespace Test
         [TestMethod]
         public void EnsureLoginWorks()
         {
-            var req = Hire_Hop_Interface.HireHop.Authentication.Login(cookie, Details.hh_email, Details.hh_password);
+            var req = Authentication.Login(cookie, Details.hh_email, Details.hh_password);
 
             req.Wait();
 
