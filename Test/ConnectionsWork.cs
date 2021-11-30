@@ -8,7 +8,7 @@ namespace Test
     {
         #region Fields
 
-        private ConnecionCookie cookie = new ConnecionCookie("odavies%40etherlive.co.uk", "7673062c13f3471556ca61c95e747123", "9Zzfi8vnNksC");
+        private ConnectionCookie cookie = new ConnectionCookie("odavies%40etherlive.co.uk", "7673062c13f3471556ca61c95e747123", "9Zzfi8vnNksC");
 
         #endregion Fields
 

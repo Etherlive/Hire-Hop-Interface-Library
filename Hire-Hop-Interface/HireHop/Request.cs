@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http.Headers;
 using System.IO;
+using System.Web;
 
 namespace Hire_Hop_Interface.HireHop
 {
@@ -21,9 +22,9 @@ namespace Hire_Hop_Interface.HireHop
 
         #region Constructors
 
-        public Request(string _url, string _method, ConnecionCookie _connecionCookie)
+        public Request(string _url, string _method, ConnectionCookie _connecionCookie)
         {
-            this.connecionCookie = _connecionCookie;
+            this.connectionCookie = _connecionCookie;
             this.url = _url;
             this.method = _method;
 
@@ -35,7 +36,7 @@ namespace Hire_Hop_Interface.HireHop
 
         #region Properties
 
-        public ConnecionCookie connecionCookie { get; private set; }
+        public ConnectionCookie connectionCookie { get; private set; }
 
         public string method { get; private set; }
 
@@ -48,7 +49,7 @@ namespace Hire_Hop_Interface.HireHop
         {
             get
             {
-                return urlQueryParams.Count > 0 ? QueryHelpers.AddQueryString(url, urlQueryParams) : "";
+                return urlQueryParams.Count > 0 ? QueryHelpers.AddQueryString(url, urlQueryParams) : url;
             }
         }
 
@@ -80,13 +81,14 @@ namespace Hire_Hop_Interface.HireHop
             {
                 if (this.urlFormValues.Count > 0)
                 {
-                    request.Content = new StringContent(string.Join("&", this.urlFormValues));
+                    string form = string.Join("&", this.urlFormValues.Select(x => $"{x.Key}={HttpUtility.UrlEncode(x.Value)}"));
+                    request.Content = new StringContent(form);
                     request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
                 }
 
                 try
                 {
-                    using (var response = await this.connecionCookie.httpClient.SendAsync(request))
+                    using (var response = await this.connectionCookie.httpClient.SendAsync(request))
                     {
                         string content = await response.Content.ReadAsStringAsync();
 
