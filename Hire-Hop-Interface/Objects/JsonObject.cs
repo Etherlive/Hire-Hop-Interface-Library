@@ -1,4 +1,4 @@
-﻿using Hire_Hop_Interface.HireHop;
+﻿using Hire_Hop_Interface.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -29,7 +29,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public virtual async Task<bool> LoadData(ConnectionCookie cookie)
+        public virtual async Task<bool> LoadData(Interface.Cookies.Connection cookie)
         {
             throw new Exception("You are using a unoverloaded Data Load Function");
         }

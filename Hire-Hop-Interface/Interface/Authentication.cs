@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Hire_Hop_Interface.Interface;
 
-namespace Hire_Hop_Interface.HireHop
+namespace Hire_Hop_Interface.Interface
 {
     public static class Authentication
     {
         #region Methods
 
-        public static async Task<bool> CanReachHome(ConnectionCookie connection)
+        public static async Task<bool> CanReachHome(Cookies.Connection connection)
         {
             var req = new Request("home.php", "get", connection);
             var res = await req.Execute();
             return res.body.Contains("<title>HireHop</title>");
         }
 
-        public static async Task<bool> Login(ConnectionCookie connection, string username, string password, string company = "ELTH")
+        public static async Task<bool> Login(Cookies.Connection connection, string username, string password, string company = "ELTH")
         {
             var req = new Request("login.php", "post", connection);
             req.AddOrSetForm("loc", "home.php");
@@ -59,7 +60,7 @@ namespace Hire_Hop_Interface.HireHop
             return false;
         }
 
-        public static async Task<bool> ToggleAdmin(ConnectionCookie connection)
+        public static async Task<bool> ToggleAdmin(Cookies.Connection connection)
         {
             var req = new Request("php_functions/superuser.php", "POST", connection);
             var res = await req.Execute();

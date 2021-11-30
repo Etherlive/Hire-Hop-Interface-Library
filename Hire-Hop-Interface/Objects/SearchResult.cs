@@ -1,4 +1,4 @@
-﻿using Hire_Hop_Interface.HireHop;
+﻿using Hire_Hop_Interface.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -39,7 +39,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public async Task<Job> GetJob(ConnectionCookie cookie)
+        public async Task<Job> GetJob(Interface.Cookies.Connection cookie)
         {
             var job = new Job(this.id);
             if (await job.LoadData(cookie))

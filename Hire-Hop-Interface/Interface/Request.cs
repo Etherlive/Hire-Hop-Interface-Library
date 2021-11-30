@@ -10,7 +10,7 @@ using System.IO;
 using System.Web;
 using System.Text.Json;
 
-namespace Hire_Hop_Interface.HireHop
+namespace Hire_Hop_Interface.Interface
 {
     public class Request
     {
@@ -23,9 +23,9 @@ namespace Hire_Hop_Interface.HireHop
 
         #region Constructors
 
-        public Request(string _url, string _method, ConnectionCookie _connecionCookie)
+        public Request(string _url, string _method, Cookies.Connection _connecionCookie)
         {
-            this.connectionCookie = _connecionCookie;
+            this.cookie = _connecionCookie;
             this.url = _url;
             this.method = _method;
 
@@ -37,7 +37,7 @@ namespace Hire_Hop_Interface.HireHop
 
         #region Properties
 
-        public ConnectionCookie connectionCookie { get; private set; }
+        public Cookies.Connection cookie { get; private set; }
 
         public string method { get; private set; }
 
@@ -89,7 +89,7 @@ namespace Hire_Hop_Interface.HireHop
 
                 try
                 {
-                    using (var response = await this.connectionCookie.httpClient.SendAsync(request))
+                    using (var response = await this.cookie.httpClient.SendAsync(request))
                     {
                         string content = await response.Content.ReadAsStringAsync();
 
@@ -99,7 +99,7 @@ namespace Hire_Hop_Interface.HireHop
                         {
                             if (json.Value.TryGetProperty("error", out JsonElement error))
                             {
-                                throw new Exception(HireHop.Errors.errorStrings[error.GetInt32()]);
+                                throw new Exception(Interface.Errors.errorStrings[error.GetInt32()]);
                             }
                         }
 

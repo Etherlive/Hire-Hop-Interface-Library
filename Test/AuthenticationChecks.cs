@@ -1,4 +1,4 @@
-﻿using Hire_Hop_Interface.HireHop;
+﻿using Hire_Hop_Interface.Interface;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Test
     {
         #region Fields
 
-        private ConnectionCookie cookie = new ConnectionCookie();
+        private Hire_Hop_Interface.Interface.Cookies.Connection cookie = new Hire_Hop_Interface.Interface.Cookies.Connection();
 
         #endregion Fields
 

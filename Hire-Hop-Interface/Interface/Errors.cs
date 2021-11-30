@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Hire_Hop_Interface.HireHop
+namespace Hire_Hop_Interface.Interface
 {
     public static class Errors
     {

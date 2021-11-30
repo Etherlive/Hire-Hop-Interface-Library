@@ -1,4 +1,4 @@
-﻿using Hire_Hop_Interface.HireHop;
+﻿using Hire_Hop_Interface.Interface;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public override async Task<bool> LoadData(ConnectionCookie cookie)
+        public override async Task<bool> LoadData(Interface.Cookies.Connection cookie)
         {
             var req = new Request("php_functions/job_refresh.php", "POST", cookie);
             req.AddOrSetForm("job", this.jobId);
@@ -60,7 +60,7 @@ namespace Hire_Hop_Interface.Objects
             return false;
         }
 
-        public async Task<bool> SaveCustomFields(ConnectionCookie cookie)
+        public async Task<bool> SaveCustomFields(Interface.Cookies.Connection cookie)
         {
             var req = new Request("php_functions/job_save.php", "POST", cookie);
 
@@ -111,7 +111,8 @@ namespace Hire_Hop_Interface.Objects
         {
             #region Constructors
 
-            public CustomField() { }
+            public CustomField()
+            { }
 
             public CustomField(string id, string key, string value)
             {

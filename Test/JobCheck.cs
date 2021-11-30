@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Hire_Hop_Interface.HireHop;
+using Hire_Hop_Interface.Interface;
 using Hire_Hop_Interface.Objects;
 
 namespace Test
@@ -9,7 +9,7 @@ namespace Test
     {
         #region Fields
 
-        private ConnectionCookie cookie = new ConnectionCookie();
+        private Hire_Hop_Interface.Interface.Cookies.Connection cookie = new Hire_Hop_Interface.Interface.Cookies.Connection();
         private Job job;
 
         #endregion Fields

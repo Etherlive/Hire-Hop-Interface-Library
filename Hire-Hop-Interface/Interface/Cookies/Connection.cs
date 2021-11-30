@@ -4,9 +4,9 @@ using System.Net;
 using System.Linq;
 using System.Text.Json;
 
-namespace Hire_Hop_Interface.HireHop
+namespace Hire_Hop_Interface.Interface.Cookies
 {
-    public class ConnectionCookie
+    public class Connection
     {
         #region Fields
 
@@ -17,14 +17,14 @@ namespace Hire_Hop_Interface.HireHop
 
         #region Constructors
 
-        public ConnectionCookie()
+        public Connection()
         {
             this.email = null;
             this.password = null;
             this.key = null;
         }
 
-        public ConnectionCookie(string _email, string _password, string _key)
+        public Connection(string _email, string _password, string _key)
         {
             this.email = _email;
             this.password = _password;
@@ -86,9 +86,9 @@ namespace Hire_Hop_Interface.HireHop
 
             if (this.email != null)
             {
-                this._httpHandler.CookieContainer.Add(new Cookie("email", this.email, "/", Request.hhMasterDomain));
-                this._httpHandler.CookieContainer.Add(new Cookie("password", this.password, "/", Request.hhMasterDomain));
-                this._httpHandler.CookieContainer.Add(new Cookie("key", this.key, "/", Request.hhMasterDomain));
+                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("email", this.email, "/", Request.hhMasterDomain));
+                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("password", this.password, "/", Request.hhMasterDomain));
+                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("key", this.key, "/", Request.hhMasterDomain));
             }
 
             return this._httpHandler;

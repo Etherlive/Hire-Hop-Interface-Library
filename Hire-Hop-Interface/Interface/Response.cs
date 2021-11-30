@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Hire_Hop_Interface.HireHop
+namespace Hire_Hop_Interface.Interface
 {
     public class Response
     {
