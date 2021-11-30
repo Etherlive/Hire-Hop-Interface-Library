@@ -35,7 +35,7 @@ namespace Test
 
             res.Wait();
 
-            Assert.IsNotNull(res.Result.json);
+            Assert.IsNotNull(res.Result.TryParseJson(out _));
         }
 
         [TestInitialize]

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http.Headers;
 using System.IO;
 using System.Web;
+using System.Text.Json;
 
 namespace Hire_Hop_Interface.HireHop
 {
@@ -92,7 +93,17 @@ namespace Hire_Hop_Interface.HireHop
                     {
                         string content = await response.Content.ReadAsStringAsync();
 
-                        return new Response(this, content);
+                        Response r = new Response(this, content);
+
+                        if (r.TryParseJson(out JsonElement? json))
+                        {
+                            if (json.Value.TryGetProperty("error", out JsonElement error))
+                            {
+                                throw new Exception(HireHop.Errors.errorStrings[error.GetInt32()]);
+                            }
+                        }
+
+                        return r;
                     }
                 }
                 catch (Exception e)

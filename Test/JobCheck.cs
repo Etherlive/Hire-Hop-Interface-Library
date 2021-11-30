@@ -10,26 +10,35 @@ namespace Test
         #region Fields
 
         private ConnectionCookie cookie = new ConnectionCookie();
+        private Job job;
 
         #endregion Fields
 
         #region Methods
 
         [TestMethod]
-        public void EnsureJobWorks()
+        public void EnsureCustomFieldUpdating()
         {
-            var job = new Job("1131");
-            var req = job.LoadData(cookie);
+            job.customFields[0].value = "Changed";
 
+            var admn_req = Authentication.ToggleAdmin(cookie);
+            admn_req.Wait();
+
+            Assert.IsTrue(admn_req.Result);
+
+            var req = job.SaveCustomFields(cookie);
             req.Wait();
 
             Assert.IsTrue(req.Result);
+            Assert.IsTrue(job.customFields[0].value == "Changed");
+        }
 
+        [TestMethod]
+        public void EnsureJobWorks()
+        {
             Assert.IsTrue(job.json.HasValue);
 
             Assert.IsNotNull(job.id);
-
-            Assert.IsNotNull(job.customFields[0]);
         }
 
         [TestInitialize]
@@ -39,6 +48,12 @@ namespace Test
 
             req.Wait();
 
+            Assert.IsTrue(req.Result);
+
+            job = new Job("1131");
+            req = job.LoadData(cookie);
+
+            req.Wait();
             Assert.IsTrue(req.Result);
         }
 

@@ -59,6 +59,20 @@ namespace Hire_Hop_Interface.HireHop
             return false;
         }
 
+        public static async Task<bool> ToggleAdmin(ConnectionCookie connection)
+        {
+            var req = new Request("php_functions/superuser.php", "POST", connection);
+            var res = await req.Execute();
+            if (res != null)
+            {
+                if (res.TryParseJson(out JsonElement? json))
+                {
+                    return json.Value.TryGetProperty("success", out JsonElement e) && e.GetBoolean();
+                }
+            }
+            return false;
+        }
+
         #endregion Methods
     }
 }

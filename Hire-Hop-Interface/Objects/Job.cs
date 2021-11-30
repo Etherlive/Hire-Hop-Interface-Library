@@ -1,5 +1,6 @@
 ﻿using Hire_Hop_Interface.HireHop;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Hire_Hop_Interface.Objects
 
         public CustomField[] customFields
         {
-            get { return _customFields == null ? extractCustomFields() : _customFields; }
+            get { return _customFields == null ? ExtractCustomFields() : _customFields; }
         }
 
         public string id
@@ -49,15 +50,47 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetForm("job", this.jobId);
 
             var res = await req.Execute();
-            if (res != null)
+
+            JsonElement? json;
+            if (res.TryParseJson(out json))
             {
-                this.json = res.json;
+                this.json = json;
                 return true;
             }
             return false;
         }
 
-        private CustomField[] extractCustomFields()
+        public async Task<bool> SaveCustomFields(ConnectionCookie cookie)
+        {
+            var req = new Request("php_functions/job_save.php", "POST", cookie);
+
+            req.AddOrSetForm("main_id", this.jobId);
+
+            foreach (CustomField field in this._customFields)
+            {
+                string pre = $"fields[ethl_custom_fields][value][{field.id}]";
+                req.AddOrSetForm($"{pre}[id]", field.id);
+                req.AddOrSetForm($"{pre}[key]", field.key);
+                req.AddOrSetForm($"{pre}[value]", field.value);
+            }
+
+            var res = await req.Execute();
+
+            if (res != null)
+            {
+                this._customFields = null;
+
+                JsonElement? json;
+                if (res.TryParseJson(out json))
+                {
+                    this.json = json;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private CustomField[] ExtractCustomFields()
         {
             string raw = this.json.Value.GetProperty("fields").GetProperty("ethl_custom_fields").GetProperty("value").GetRawText();
             _customFields = JsonSerializer.Deserialize<CustomField[]>(raw);

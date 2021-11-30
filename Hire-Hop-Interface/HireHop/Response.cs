@@ -6,23 +6,13 @@ namespace Hire_Hop_Interface.HireHop
     {
         #region Fields
 
+        public readonly string body;
+        public readonly Request request;
         private JsonElement? _json;
 
         #endregion Fields
 
-        #region Methods
-
-        private JsonElement parseBody()
-        {
-            this._json = JsonSerializer.Deserialize<JsonElement>(this.body);
-            return this._json.Value;
-        }
-
-        #endregion Methods
-
-        public readonly string body;
-
-        public readonly Request request;
+        #region Constructors
 
         public Response(Request _request, string _body)
         {
@@ -30,9 +20,24 @@ namespace Hire_Hop_Interface.HireHop
             this.request = _request;
         }
 
-        public JsonElement json
+        #endregion Constructors
+
+        #region Methods
+
+        public bool TryParseJson(out JsonElement? json)
         {
-            get { return this._json.HasValue ? this._json.Value : this.parseBody(); }
+            try
+            {
+                json = JsonSerializer.Deserialize<JsonElement>(this.body);
+                return true;
+            }
+            catch
+            {
+                json = null;
+                return false;
+            }
         }
+
+        #endregion Methods
     }
 }
