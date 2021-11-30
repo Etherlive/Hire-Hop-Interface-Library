@@ -11,7 +11,7 @@ namespace Hire_Hop_Interface.Objects
     {
         #region Fields
 
-        private CustomField[] _customFields;
+        private List<CustomField> _customFields;
 
         private string jobId;
 
@@ -30,7 +30,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Properties
 
-        public CustomField[] customFields
+        public List<CustomField> customFields
         {
             get { return _customFields == null ? ExtractCustomFields() : _customFields; }
         }
@@ -64,9 +64,11 @@ namespace Hire_Hop_Interface.Objects
         {
             var req = new Request("php_functions/job_save.php", "POST", cookie);
 
-            req.AddOrSetForm("main_id", this.jobId);
+            req.AddOrSetForm("id_main", this.id);
 
-            foreach (CustomField field in this._customFields)
+            req.AddOrSetForm("fields[ethl_custom_fields][type]", "array");
+
+            foreach (CustomField field in this.customFields)
             {
                 string pre = $"fields[ethl_custom_fields][value][{field.id}]";
                 req.AddOrSetForm($"{pre}[id]", field.id);
@@ -76,24 +78,28 @@ namespace Hire_Hop_Interface.Objects
 
             var res = await req.Execute();
 
-            if (res != null)
-            {
-                this._customFields = null;
+            this._customFields = null;
 
-                JsonElement? json;
-                if (res.TryParseJson(out json))
-                {
-                    this.json = json;
-                    return true;
-                }
+            JsonElement? json;
+            if (res.TryParseJson(out json))
+            {
+                this.json = json;
+                return true;
             }
             return false;
         }
 
-        private CustomField[] ExtractCustomFields()
+        private List<CustomField> ExtractCustomFields()
         {
-            string raw = this.json.Value.GetProperty("fields").GetProperty("ethl_custom_fields").GetProperty("value").GetRawText();
-            _customFields = JsonSerializer.Deserialize<CustomField[]>(raw);
+            try
+            {
+                var values = this.json.Value.GetProperty("fields").GetProperty("ethl_custom_fields").GetProperty("value").EnumerateArray();
+                _customFields = values.Select(x => JsonSerializer.Deserialize<CustomField>(x.GetRawText())).ToList();
+            }
+            catch (Exception e)
+            {
+                _customFields = new List<CustomField>();
+            }
             return _customFields;
         }
 
@@ -103,6 +109,19 @@ namespace Hire_Hop_Interface.Objects
 
         public class CustomField
         {
+            #region Constructors
+
+            public CustomField() { }
+
+            public CustomField(string id, string key, string value)
+            {
+                this.id = id;
+                this.key = key;
+                this.value = value;
+            }
+
+            #endregion Constructors
+
             #region Properties
 
             public string id { get; set; }

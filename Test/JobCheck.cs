@@ -19,7 +19,7 @@ namespace Test
         [TestMethod]
         public void EnsureCustomFieldUpdating()
         {
-            job.customFields[0].value = "Changed";
+            job.customFields.Add(new Job.CustomField("0", "k0", "v0"));
 
             var admn_req = Authentication.ToggleAdmin(cookie);
             admn_req.Wait();
@@ -30,7 +30,7 @@ namespace Test
             req.Wait();
 
             Assert.IsTrue(req.Result);
-            Assert.IsTrue(job.customFields[0].value == "Changed");
+            Assert.IsTrue(job.customFields[0].value == "v0");
         }
 
         [TestMethod]

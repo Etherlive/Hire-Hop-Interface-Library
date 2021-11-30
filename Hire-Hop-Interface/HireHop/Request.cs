@@ -82,7 +82,7 @@ namespace Hire_Hop_Interface.HireHop
             {
                 if (this.urlFormValues.Count > 0)
                 {
-                    string form = string.Join("&", this.urlFormValues.Select(x => $"{x.Key}={HttpUtility.UrlEncode(x.Value)}"));
+                    string form = string.Join("&", this.urlFormValues.Select(x => $"{HttpUtility.UrlEncode(x.Key)}={HttpUtility.UrlEncode(x.Value)}"));
                     request.Content = new StringContent(form);
                     request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
                 }
