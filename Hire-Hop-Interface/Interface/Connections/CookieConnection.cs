@@ -4,9 +4,9 @@ using System.Net;
 using System.Linq;
 using System.Text.Json;
 
-namespace Hire_Hop_Interface.Interface.Cookies
+namespace Hire_Hop_Interface.Interface.Connections
 {
-    public class Connection
+    public class CookieConnection
     {
         #region Fields
 
@@ -17,14 +17,14 @@ namespace Hire_Hop_Interface.Interface.Cookies
 
         #region Constructors
 
-        public Connection()
+        public CookieConnection()
         {
             this.email = null;
             this.password = null;
             this.key = null;
         }
 
-        public Connection(string _email, string _password, string _key)
+        public CookieConnection(string _email, string _password, string _key)
         {
             this.email = _email;
             this.password = _password;

@@ -9,7 +9,7 @@ namespace Test
     {
         #region Fields
 
-        private Hire_Hop_Interface.Interface.Cookies.Connection cookie = new Hire_Hop_Interface.Interface.Cookies.Connection();
+        private Hire_Hop_Interface.Interface.Connections.CookieConnection cookie = new Hire_Hop_Interface.Interface.Connections.CookieConnection();
         private Job job;
 
         #endregion Fields

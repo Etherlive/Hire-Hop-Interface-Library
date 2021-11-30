@@ -3,13 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Hire_Hop_Interface.Interface.Cookies
+namespace Hire_Hop_Interface.Interface.Connections
 {
     public class Manager
     {
         #region Fields
 
-        private Dictionary<string, Connection> memory_cookie_store;
+        private Dictionary<string, CookieConnection> memory_cookie_store;
 
         #endregion Fields
 
@@ -17,14 +17,14 @@ namespace Hire_Hop_Interface.Interface.Cookies
 
         public Manager()
         {
-            memory_cookie_store = new Dictionary<string, Connection>();
+            memory_cookie_store = new Dictionary<string, CookieConnection>();
         }
 
         #endregion Constructors
 
         #region Methods
 
-        public void AddOrSetCookie(string key, Connection cookie)
+        public void AddOrSetCookie(string key, CookieConnection cookie)
         {
             if (!memory_cookie_store.TryAdd(key, cookie))
             {
@@ -40,7 +40,7 @@ namespace Hire_Hop_Interface.Interface.Cookies
             }
         }
 
-        public bool FindCookie(string key, out Connection cookie)
+        public bool FindCookie(string key, out CookieConnection cookie)
         {
             if (!memory_cookie_store.TryGetValue(key, out cookie))
             {
@@ -49,7 +49,7 @@ namespace Hire_Hop_Interface.Interface.Cookies
             return true;
         }
 
-        public bool Miss(string key, out Connection cookie)
+        public bool Miss(string key, out CookieConnection cookie)
         {
             cookie = null;
             return false;

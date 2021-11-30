@@ -23,7 +23,7 @@ namespace Hire_Hop_Interface.Interface
 
         #region Constructors
 
-        public Request(string _url, string _method, Cookies.Connection _connecionCookie)
+        public Request(string _url, string _method, Connections.CookieConnection _connecionCookie)
         {
             this.cookie = _connecionCookie;
             this.url = _url;
@@ -37,7 +37,7 @@ namespace Hire_Hop_Interface.Interface
 
         #region Properties
 
-        public Cookies.Connection cookie { get; private set; }
+        public Connections.CookieConnection cookie { get; private set; }
 
         public string method { get; private set; }
 

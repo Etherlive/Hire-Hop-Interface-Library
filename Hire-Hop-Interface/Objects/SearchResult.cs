@@ -39,7 +39,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public async Task<Job> GetJob(Interface.Cookies.Connection cookie)
+        public async Task<Job> GetJob(Interface.Connections.CookieConnection cookie)
         {
             var job = new Job(this.id);
             if (await job.LoadData(cookie))

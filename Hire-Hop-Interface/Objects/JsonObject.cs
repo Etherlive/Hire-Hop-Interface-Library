@@ -29,7 +29,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public virtual async Task<bool> LoadData(Interface.Cookies.Connection cookie)
+        public virtual async Task<bool> LoadData(Interface.Connections.CookieConnection cookie)
         {
             throw new Exception("You are using a unoverloaded Data Load Function");
         }

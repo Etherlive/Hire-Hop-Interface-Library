@@ -44,7 +44,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public override async Task<bool> LoadData(Interface.Cookies.Connection cookie)
+        public override async Task<bool> LoadData(Interface.Connections.CookieConnection cookie)
         {
             var req = new Request("php_functions/job_refresh.php", "POST", cookie);
             req.AddOrSetForm("job", this.jobId);
@@ -60,7 +60,7 @@ namespace Hire_Hop_Interface.Objects
             return false;
         }
 
-        public async Task<bool> SaveCustomFields(Interface.Cookies.Connection cookie)
+        public async Task<bool> SaveCustomFields(Interface.Connections.CookieConnection cookie)
         {
             var req = new Request("php_functions/job_save.php", "POST", cookie);
 
