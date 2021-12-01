@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Hire_Hop_Interface.Interface
+﻿namespace Hire_Hop_Interface.Interface
 {
     public static class Errors
     {
