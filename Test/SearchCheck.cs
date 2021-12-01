@@ -10,7 +10,6 @@ namespace Test
         #region Fields
 
         private Hire_Hop_Interface.Interface.Connections.CookieConnection cookie = new Hire_Hop_Interface.Interface.Connections.CookieConnection();
-        private SearchResult.SearchResponse searchResponse;
 
         #endregion Fields
 
@@ -43,13 +42,19 @@ namespace Test
         }
 
         [TestMethod]
-        public void EnsureSearchAll()
+        public void EnsureSearchAndGetJobAll()
         {
             var results = SearchResult.SearchForAll(new SearchResult.SearchOptions(), cookie);
             results.Wait();
 
-            Assert.IsNotNull(results.Result);
-            searchResponse = results.Result;
+            var searchResults = results.Result;
+
+            Assert.IsNotNull(searchResults);
+
+            var jobs = searchResults.LoadAllJobs(cookie);
+            jobs.Wait();
+
+            Assert.IsTrue(searchResults.results[0].trimmedId == jobs.Result[0].id);
         }
 
         [TestInitialize]
