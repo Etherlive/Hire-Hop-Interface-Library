@@ -38,6 +38,11 @@ namespace Hire_Hop_Interface.Objects
             get { return this.id.StartsWith("p"); }
         }
 
+        public string trimmedId
+        {
+            get { return this.json.Value.GetProperty("ID").GetString().Replace("j", "").Replace("p", ""); }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -84,7 +89,7 @@ namespace Hire_Hop_Interface.Objects
             return null;
         }
 
-        public static async Task<SearchResult[]> SearchForAll(SearchOptions options, Interface.Connections.CookieConnection cookie)
+        public static async Task<SearchResponse> SearchForAll(SearchOptions options, Interface.Connections.CookieConnection cookie)
         {
             options.page = 1;
 
@@ -102,7 +107,7 @@ namespace Hire_Hop_Interface.Objects
 
             var all_results = search_1.results.Concat(search_actions.SelectMany(x => x.Result.results));
 
-            return all_results.ToArray();
+            return new SearchResponse() { results = all_results.ToArray(), max_page = search_1.max_page };
         }
 
         public async Task<Job> GetJob(Interface.Connections.CookieConnection cookie)

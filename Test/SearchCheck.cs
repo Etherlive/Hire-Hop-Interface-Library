@@ -10,10 +10,24 @@ namespace Test
         #region Fields
 
         private Hire_Hop_Interface.Interface.Connections.CookieConnection cookie = new Hire_Hop_Interface.Interface.Connections.CookieConnection();
+        private SearchResult.SearchResponse searchResponse;
 
         #endregion Fields
 
         #region Methods
+
+        [TestMethod]
+        public void EnsureLoadData()
+        {
+            var results = SearchResult.Search(new SearchResult.SearchOptions(), cookie);
+            results.Wait();
+
+            var search = results.Result.results[0];
+            var job = search.GetJob(cookie);
+            job.Wait();
+
+            Assert.IsTrue(job.Result.id == search.trimmedId);
+        }
 
         [TestMethod]
         public void EnsureSearch()
@@ -35,6 +49,7 @@ namespace Test
             results.Wait();
 
             Assert.IsNotNull(results.Result);
+            searchResponse = results.Result;
         }
 
         [TestInitialize]
