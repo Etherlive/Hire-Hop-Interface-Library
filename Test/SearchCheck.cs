@@ -28,6 +28,15 @@ namespace Test
             Assert.IsTrue(results.Result.max_page > -1);
         }
 
+        [TestMethod]
+        public void EnsureSearchAll()
+        {
+            var results = SearchResult.SearchForAll(new SearchResult.SearchOptions(), cookie);
+            results.Wait();
+
+            Assert.IsNotNull(results.Result);
+        }
+
         [TestInitialize]
         public void Setup()
         {

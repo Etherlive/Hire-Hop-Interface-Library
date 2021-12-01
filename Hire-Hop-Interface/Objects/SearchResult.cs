@@ -1,7 +1,7 @@
 ﻿using Hire_Hop_Interface.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -82,6 +82,27 @@ namespace Hire_Hop_Interface.Objects
                 return new SearchResponse() { results = results.ToArray(), max_page = json.Value.GetProperty("total").GetInt32() };
             }
             return null;
+        }
+
+        public static async Task<SearchResult[]> SearchForAll(SearchOptions options, Interface.Connections.CookieConnection cookie)
+        {
+            options.page = 1;
+
+            var search_1 = await Search(options, cookie);
+
+            var search_actions = new Task<SearchResponse>[search_1.max_page - 2];
+
+            for (int i = 0; i < search_actions.Length; i++)
+            {
+                options.page++;
+                search_actions[i] = Search(options, cookie);
+            }
+
+            Task.WaitAll(search_actions);
+
+            var all_results = search_1.results.Concat(search_actions.SelectMany(x => x.Result.results));
+
+            return all_results.ToArray();
         }
 
         public async Task<Job> GetJob(Interface.Connections.CookieConnection cookie)
