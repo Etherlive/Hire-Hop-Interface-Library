@@ -2,6 +2,7 @@
 using Hire_Hop_Interface.Interface.Connections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,6 +15,12 @@ namespace Hire_Hop_Interface.Objects
 
         public Note()
         { }
+
+        public Note(JsonElement json, string jobId)
+        {
+            this.json = json;
+            this.job_id = jobId;
+        }
 
         public Note(CookieConnection cookie, string jobId, string body)
         {
@@ -48,6 +55,33 @@ namespace Hire_Hop_Interface.Objects
         #endregion Properties
 
         #region Methods
+
+        public static async Task<Note[]> GetNotes(CookieConnection cookie, string jobId, int page = 1)
+        {
+            var req = new Request("php_functions/notes_list.php", "POST", cookie);
+            req.AddOrSetQuery("main_id", jobId);
+            req.AddOrSetQuery("type", "1");
+            req.AddOrSetQuery("_search", "false");
+            req.AddOrSetQuery("nd", "1634027079497");
+            req.AddOrSetQuery("rows", "50");
+            req.AddOrSetQuery("page", page.ToString());
+            req.AddOrSetQuery("sidx", "CREATE_DATE");
+            req.AddOrSetQuery("sord", "desc");
+
+            var res = await req.Execute();
+            if (res.TryParseJson(out JsonElement? json))
+            {
+                List<Note> notes = new List<Note>();
+                var rows = json.Value.GetProperty("rows").EnumerateArray();
+                while (rows.MoveNext())
+                {
+                    notes.Add(new Note(rows.Current.GetProperty("cell"), jobId));
+                }
+
+                return notes.ToArray();
+            }
+            return null;
+        }
 
         public async Task Delete(CookieConnection cookie)
         {

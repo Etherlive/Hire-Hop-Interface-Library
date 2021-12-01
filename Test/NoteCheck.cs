@@ -28,6 +28,21 @@ namespace Test
             Assert.IsNull(note.json);
         }
 
+        [TestMethod]
+        public void EnsureGetNotes()
+        {
+            var notes = Note.GetNotes(cookie, "1131");
+            notes.Wait();
+
+            Assert.IsNotNull(notes.Result);
+
+            if (notes.Result.Length > 0)
+            {
+                Assert.IsNotNull(notes.Result[0].job_id);
+                Assert.IsNotNull(notes.Result[0].json);
+            }
+        }
+
         [TestInitialize]
         public void Setup()
         {
