@@ -42,7 +42,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public static async Task<SearchResult[]> Search(SearchOptions options, Interface.Connections.CookieConnection cookie)
+        public static async Task<SearchResponse> Search(SearchOptions options, Interface.Connections.CookieConnection cookie)
         {
             var req = new Request("frames/search_field_results.php", "POST", cookie);
 
@@ -79,7 +79,7 @@ namespace Hire_Hop_Interface.Objects
                     results.Add(new SearchResult(rows.Current.GetProperty("cell")));
                 }
 
-                return results.ToArray();
+                return new SearchResponse() { results = results.ToArray(), max_page = json.Value.GetProperty("total").GetInt32() };
             }
             return null;
         }
@@ -110,6 +110,16 @@ namespace Hire_Hop_Interface.Objects
             public string from = "", to = "", status = "0,1,2,3,4,5,6,7,8", job_name;
 
             public bool jobs = true, projects = false, open = false, closed = false, search = false, money_owed = false, is_late = false, mine = false, no_user = false, needs_bill = false;
+
+            #endregion Fields
+        }
+
+        public class SearchResponse
+        {
+            #region Fields
+
+            public int max_page = -1;
+            public SearchResult[] results;
 
             #endregion Fields
         }

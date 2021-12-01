@@ -23,7 +23,9 @@ namespace Test
 
             Assert.IsNotNull(results.Result);
 
-            Assert.IsTrue(results.Result[0].is_job || results.Result[0].is_project);
+            Assert.IsTrue(results.Result.results[0].is_job || results.Result.results[0].is_project);
+
+            Assert.IsTrue(results.Result.max_page > -1);
         }
 
         [TestInitialize]
