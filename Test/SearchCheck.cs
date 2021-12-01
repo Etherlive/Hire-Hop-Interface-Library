@@ -1,10 +1,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Hire_Hop_Interface.Interface;
+using Hire_Hop_Interface.Objects;
 
 namespace Test
 {
     [TestClass]
-    public class ConnectionsWork
+    public class SearchCheck
     {
         #region Fields
 
@@ -15,27 +16,14 @@ namespace Test
         #region Methods
 
         [TestMethod]
-        public void EnsureHomeReqWorks()
+        public void EnsureSearch()
         {
-            var req = Authentication.CanReachHome(cookie);
+            var results = SearchResult.Search(new SearchResult.SearchOptions(), cookie);
+            results.Wait();
 
-            req.Wait();
+            Assert.IsNotNull(results.Result);
 
-            Assert.IsTrue(req.Result);
-        }
-
-        [TestMethod]
-        public void EnsureJSONWorks()
-        {
-            var req = new Request("php_functions/job_refresh.php", "get", cookie);
-
-            req.AddOrSetQuery("job", "1131");
-
-            var res = req.Execute();
-
-            res.Wait();
-
-            Assert.IsNotNull(res.Result.TryParseJson(out _));
+            Assert.IsTrue(results.Result[0].is_job || results.Result[0].is_project);
         }
 
         [TestInitialize]

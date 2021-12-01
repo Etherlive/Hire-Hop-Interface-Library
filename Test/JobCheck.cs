@@ -42,7 +42,7 @@ namespace Test
         }
 
         [TestInitialize]
-        public void EnsureLoginWorks()
+        public void Setup()
         {
             var req = Authentication.Login(cookie, Details.hh_email, Details.hh_password);
 

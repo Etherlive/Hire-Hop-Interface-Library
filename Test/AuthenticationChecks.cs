@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Hire_Hop_Interface.Interface.Connections;
 
 namespace Test
 {
@@ -11,11 +12,20 @@ namespace Test
     {
         #region Fields
 
-        private Hire_Hop_Interface.Interface.Connections.CookieConnection cookie = new Hire_Hop_Interface.Interface.Connections.CookieConnection();
+        private CookieConnection cookie = new CookieConnection();
+        private Manager manager = new Manager();
 
         #endregion Fields
 
         #region Methods
+
+        [TestMethod]
+        public void EnsureCookieManagerWorks()
+        {
+            manager.AddOrSetCookie("local", cookie);
+
+            Assert.IsTrue(manager.FindCookie("local", out _));
+        }
 
         [TestMethod]
         public void EnsureLoginWorks()

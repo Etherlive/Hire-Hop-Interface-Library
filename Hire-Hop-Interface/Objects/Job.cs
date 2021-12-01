@@ -91,16 +91,20 @@ namespace Hire_Hop_Interface.Objects
 
         private List<CustomField> ExtractCustomFields()
         {
+            List<CustomField> fields = new List<CustomField>();
             try
             {
                 var values = this.json.Value.GetProperty("fields").GetProperty("ethl_custom_fields").GetProperty("value").EnumerateArray();
-                _customFields = values.Select(x => JsonSerializer.Deserialize<CustomField>(x.GetRawText())).ToList();
+                while (values.MoveNext())
+                {
+                    fields.Add(JsonSerializer.Deserialize<CustomField>(values.Current.GetRawText()));
+                }
             }
             catch (Exception e)
             {
-                _customFields = new List<CustomField>();
             }
-            return _customFields;
+            this._customFields = fields;
+            return this._customFields;
         }
 
         #endregion Methods
