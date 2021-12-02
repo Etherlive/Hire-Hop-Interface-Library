@@ -86,12 +86,11 @@ namespace Hire_Hop_Interface.Interface
                     request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
                 }
 
-                try
+                using (var response = await this.cookie.httpClient.SendAsync(request))
                 {
-                    using (var response = await this.cookie.httpClient.SendAsync(request))
+                    string content = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
                     {
-                        string content = await response.Content.ReadAsStringAsync();
-
                         Response r = new Response(this, content);
 
                         if (r.TryParseJson(out JsonElement? json))
@@ -104,21 +103,10 @@ namespace Hire_Hop_Interface.Interface
 
                         return r;
                     }
-                }
-                catch (Exception e)
-                {
-                    if (!Directory.Exists("./logs"))
+                    else
                     {
-                        Directory.CreateDirectory("./logs");
+                        throw new Exception("HH Error Occurred", new Exception(content));
                     }
-
-                    string fname = $"{e.Source} {DateTime.Now.ToShortDateString()} {DateTime.Now.Ticks}".Replace("\\", "-").Replace("/", "-").Replace(".", "-");
-
-                    Console.WriteLine($"An Error Occurred. Written to logs/{fname}");
-                    File.WriteAllText($"./logs/{fname}.log",
-                        $"{urlWP}\n{this.method}\n{request.Content}\n\n{e.ToString()}");
-
-                    throw e;
                 }
             }
         }
