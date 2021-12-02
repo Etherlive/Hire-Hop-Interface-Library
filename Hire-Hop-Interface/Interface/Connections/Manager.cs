@@ -39,17 +39,7 @@ namespace Hire_Hop_Interface.Interface.Connections
 
         public bool FindCookie(string key, out CookieConnection cookie)
         {
-            if (!memory_cookie_store.TryGetValue(key, out cookie))
-            {
-                return Miss(key, out cookie);
-            }
-            return true;
-        }
-
-        public bool Miss(string key, out CookieConnection cookie)
-        {
-            cookie = null;
-            return false;
+            return memory_cookie_store.TryGetValue(key, out cookie);
         }
 
         #endregion Methods
