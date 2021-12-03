@@ -25,7 +25,9 @@ namespace Hire_Hop_Interface.Interface.Caching
             }
             else
             {
-                return await base.Execute();
+                var res = await base.Execute();
+                cache.StoreOrUpdate(this, res);
+                return res;
             }
         }
 

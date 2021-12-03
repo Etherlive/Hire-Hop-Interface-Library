@@ -6,9 +6,10 @@ namespace Hire_Hop_Interface.Interface
     {
         #region Fields
 
+        private JsonElement? _json;
         public readonly string body;
         public readonly Request request;
-        private JsonElement? _json;
+        public bool fromCache = false;
 
         #endregion Fields
 
