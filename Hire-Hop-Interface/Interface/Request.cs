@@ -73,7 +73,7 @@ namespace Hire_Hop_Interface.Interface
             }
         }
 
-        public async Task<Response> Execute()
+        public virtual async Task<Response> Execute()
         {
             string urlWP = this.urlWithParams;
 
