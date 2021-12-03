@@ -1,4 +1,5 @@
 ﻿using Hire_Hop_Interface.Interface;
+using Hire_Hop_Interface.Interface.Caching;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -15,6 +16,28 @@ namespace Hire_Hop_Interface.Objects
         private string jobId;
 
         #endregion Fields
+
+        #region Methods
+
+        private List<CustomField> ExtractCustomFields()
+        {
+            List<CustomField> fields = new List<CustomField>();
+            try
+            {
+                var values = this.json.Value.GetProperty("fields").GetProperty("ethl_custom_fields").GetProperty("value").EnumerateArray();
+                while (values.MoveNext())
+                {
+                    fields.Add(JsonSerializer.Deserialize<CustomField>(values.Current.GetRawText()));
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            this._customFields = fields;
+            return this._customFields;
+        }
+
+        #endregion Methods
 
         #region Constructors
 
@@ -41,11 +64,9 @@ namespace Hire_Hop_Interface.Objects
 
         #endregion Properties
 
-        #region Methods
-
         public override async Task<bool> LoadData(Interface.Connections.CookieConnection cookie)
         {
-            var req = new Request("php_functions/job_refresh.php", "POST", cookie);
+            var req = new CacheableRequest("php_functions/job_refresh.php", "POST", cookie);
             req.AddOrSetForm("job", this.jobId);
 
             var res = await req.Execute();
@@ -88,28 +109,6 @@ namespace Hire_Hop_Interface.Objects
             return false;
         }
 
-        private List<CustomField> ExtractCustomFields()
-        {
-            List<CustomField> fields = new List<CustomField>();
-            try
-            {
-                var values = this.json.Value.GetProperty("fields").GetProperty("ethl_custom_fields").GetProperty("value").EnumerateArray();
-                while (values.MoveNext())
-                {
-                    fields.Add(JsonSerializer.Deserialize<CustomField>(values.Current.GetRawText()));
-                }
-            }
-            catch (Exception e)
-            {
-            }
-            this._customFields = fields;
-            return this._customFields;
-        }
-
-        #endregion Methods
-
-        #region Classes
-
         public class CustomField
         {
             #region Constructors
@@ -134,7 +133,5 @@ namespace Hire_Hop_Interface.Objects
 
             #endregion Properties
         }
-
-        #endregion Classes
     }
 }

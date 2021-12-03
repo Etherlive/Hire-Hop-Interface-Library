@@ -1,4 +1,5 @@
 ﻿using Hire_Hop_Interface.Interface;
+using Hire_Hop_Interface.Interface.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace Hire_Hop_Interface.Objects
 
         public static async Task<SearchResponse> Search(SearchOptions options, Interface.Connections.CookieConnection cookie)
         {
-            var req = new Request("frames/search_field_results.php", "POST", cookie);
+            var req = new CacheableRequest("frames/search_field_results.php", "POST", cookie);
 
             req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 

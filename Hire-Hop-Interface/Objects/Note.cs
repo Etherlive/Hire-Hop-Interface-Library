@@ -1,4 +1,5 @@
 ﻿using Hire_Hop_Interface.Interface;
+using Hire_Hop_Interface.Interface.Caching;
 using Hire_Hop_Interface.Interface.Connections;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -55,7 +56,7 @@ namespace Hire_Hop_Interface.Objects
 
         public static async Task<Note[]> GetNotes(CookieConnection cookie, string jobId, int page = 1)
         {
-            var req = new Request("php_functions/notes_list.php", "POST", cookie);
+            var req = new CacheableRequest("php_functions/notes_list.php", "POST", cookie);
             req.AddOrSetQuery("main_id", jobId);
             req.AddOrSetQuery("type", "1");
             req.AddOrSetQuery("_search", "false");
