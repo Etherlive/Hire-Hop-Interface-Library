@@ -1,5 +1,4 @@
-﻿using Hire_Hop_Interface.Interface;
-using Hire_Hop_Interface.Interface.Caching;
+﻿using Hire_Hop_Interface.Interface.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
