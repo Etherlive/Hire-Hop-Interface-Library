@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Hire_Hop_Interface.Objects
+namespace Hire_Hop_Interface.Objects.JobProject
 {
     public partial class SearchResult : JsonObject
     {

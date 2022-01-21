@@ -69,15 +69,7 @@ namespace Hire_Hop_Interface.Objects
             var req = new CacheableRequest("php_functions/job_refresh.php", "POST", cookie);
             req.AddOrSetForm("job", this.jobId);
 
-            var res = await req.Execute();
-
-            JsonElement? json;
-            if (res.TryParseJson(out json))
-            {
-                this.json = json;
-                return true;
-            }
-            return false;
+            return await LoadData(req);
         }
 
         public async Task<bool> SaveCustomFields(Interface.Connections.CookieConnection cookie)

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hire_Hop_Interface.Objects
+namespace Hire_Hop_Interface.Objects.JobProject
 {
     public partial class SearchResult
     {
