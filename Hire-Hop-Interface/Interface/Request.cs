@@ -58,6 +58,7 @@ namespace Hire_Hop_Interface.Interface
 
         public void AddOrSetForm(string key, string val)
         {
+            val = val == null ? "" : val;
             if (!urlFormValues.TryAdd(key, val))
             {
                 urlFormValues[key] = val;
@@ -66,6 +67,7 @@ namespace Hire_Hop_Interface.Interface
 
         public void AddOrSetQuery(string key, string val)
         {
+            val = val == null ? "" : val;
             if (!urlQueryParams.TryAdd(key, val))
             {
                 urlQueryParams[key] = val;
