@@ -26,6 +26,12 @@ namespace Hire_Hop_Interface.Objects
             save.Wait();
         }
 
+        public Note(CookieConnection cookie, string jobId, string body, string hhid)
+        {
+            var save = Save(cookie, jobId, body, hhid);
+            save.Wait();
+        }
+
         #endregion Constructors
 
         #region Properties
