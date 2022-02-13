@@ -112,6 +112,11 @@ namespace Hire_Hop_Interface.Interface
             }
         }
 
+        public virtual async Task<Response> ExecuteWithCache(Caching.ResponseCache cache = null)
+        {
+            return await Execute();
+        }
+
         public bool TryGetForm(string key, out string val)
         {
             return urlFormValues.TryGetValue(key, out val);

@@ -35,7 +35,7 @@ namespace Hire_Hop_Interface.Objects
 
         public async Task<bool> LoadData(Request req)
         {
-            var res = await req.Execute();
+            var res = await req.ExecuteWithCache();
 
             JsonElement? json;
             if (res.TryParseJson(out json))

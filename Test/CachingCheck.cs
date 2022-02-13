@@ -23,13 +23,13 @@ namespace Test
             var req = new CacheableRequest("php_functions/job_refresh.php", "POST", cookie);
             req.AddOrSetForm("job", "1131");
 
-            var res = req.Execute(cache);
+            var res = req.ExecuteWithCache(cache);
             res.Wait();
 
             Assert.IsFalse(res.Result.fromCache);
             string lastBody = res.Result.body;
 
-            res = req.Execute(cache);
+            res = req.ExecuteWithCache(cache);
             res.Wait();
 
             string newBody = res.Result.body;

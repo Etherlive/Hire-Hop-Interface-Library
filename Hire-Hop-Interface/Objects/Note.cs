@@ -72,7 +72,7 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("sidx", "CREATE_DATE");
             req.AddOrSetQuery("sord", "desc");
 
-            var res = await req.Execute();
+            var res = await req.ExecuteWithCache();
             if (res.TryParseJson(out JsonElement? json))
             {
                 List<Note> notes = new List<Note>();
