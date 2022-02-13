@@ -1,11 +1,11 @@
-﻿using Hire_Hop_Interface.Interface;
+﻿using Hire_Hop_Interface.Interface.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Hire_Hop_Interface.Objects
+namespace Hire_Hop_Interface.Objects.JobProject
 {
     public partial class SearchResult : JsonObject
     {
@@ -49,7 +49,7 @@ namespace Hire_Hop_Interface.Objects
 
         public static async Task<SearchResponse> Search(SearchOptions options, Interface.Connections.CookieConnection cookie)
         {
-            var req = new Request("frames/search_field_results.php", "POST", cookie);
+            var req = new CacheableRequest("frames/search_field_results.php", "POST", cookie);
 
             req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
@@ -73,7 +73,10 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("sidx", "OUT_DATE");
             req.AddOrSetQuery("sord", "asc");
 
-            var res = await req.Execute();
+            if (options.from.Length > 0) req.AddOrSetQuery("from_date", options.from);
+            if (options.to.Length > 0) req.AddOrSetQuery("to_date", options.to);
+            var res = await req.ExecuteWithCache();
+
 
             if (res.TryParseJson(out JsonElement? json))
             {

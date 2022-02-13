@@ -1,4 +1,5 @@
 ﻿using Hire_Hop_Interface.Interface;
+using Hire_Hop_Interface.Interface.Caching;
 using Hire_Hop_Interface.Interface.Connections;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -22,6 +23,12 @@ namespace Hire_Hop_Interface.Objects
         public Note(CookieConnection cookie, string jobId, string body)
         {
             var save = Save(cookie, jobId, body);
+            save.Wait();
+        }
+
+        public Note(CookieConnection cookie, string jobId, string body, string hhid)
+        {
+            var save = Save(cookie, jobId, body, hhid);
             save.Wait();
         }
 
@@ -55,7 +62,7 @@ namespace Hire_Hop_Interface.Objects
 
         public static async Task<Note[]> GetNotes(CookieConnection cookie, string jobId, int page = 1)
         {
-            var req = new Request("php_functions/notes_list.php", "POST", cookie);
+            var req = new CacheableRequest("php_functions/notes_list.php", "POST", cookie);
             req.AddOrSetQuery("main_id", jobId);
             req.AddOrSetQuery("type", "1");
             req.AddOrSetQuery("_search", "false");
@@ -65,7 +72,7 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("sidx", "CREATE_DATE");
             req.AddOrSetQuery("sord", "desc");
 
-            var res = await req.Execute();
+            var res = await req.ExecuteWithCache();
             if (res.TryParseJson(out JsonElement? json))
             {
                 List<Note> notes = new List<Note>();

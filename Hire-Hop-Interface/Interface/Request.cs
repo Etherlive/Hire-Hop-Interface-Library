@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -59,6 +58,7 @@ namespace Hire_Hop_Interface.Interface
 
         public void AddOrSetForm(string key, string val)
         {
+            val = val == null ? "" : val;
             if (!urlFormValues.TryAdd(key, val))
             {
                 urlFormValues[key] = val;
@@ -67,13 +67,14 @@ namespace Hire_Hop_Interface.Interface
 
         public void AddOrSetQuery(string key, string val)
         {
+            val = val == null ? "" : val;
             if (!urlQueryParams.TryAdd(key, val))
             {
                 urlQueryParams[key] = val;
             }
         }
 
-        public async Task<Response> Execute()
+        public virtual async Task<Response> Execute()
         {
             string urlWP = this.urlWithParams;
 
@@ -109,6 +110,11 @@ namespace Hire_Hop_Interface.Interface
                     }
                 }
             }
+        }
+
+        public virtual async Task<Response> ExecuteWithCache(Caching.ResponseCache cache = null)
+        {
+            return await Execute();
         }
 
         public bool TryGetForm(string key, out string val)

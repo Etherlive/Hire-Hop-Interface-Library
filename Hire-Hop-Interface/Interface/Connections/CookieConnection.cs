@@ -15,6 +15,31 @@ namespace Hire_Hop_Interface.Interface.Connections
 
         #endregion Fields
 
+        #region Methods
+
+        private HttpClient constructClient()
+        {
+            this._httpClient = new HttpClient(this.httpHandler);
+            return this._httpClient;
+        }
+
+        private HttpClientHandler constructHandler()
+        {
+            this._httpHandler = new HttpClientHandler();
+            this._httpHandler.UseCookies = true;
+
+            if (this.email != null)
+            {
+                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("email", this.email, "/", Request.hhMasterDomain));
+                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("password", this.password, "/", Request.hhMasterDomain));
+                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("key", this.key, "/", Request.hhMasterDomain));
+            }
+
+            return this._httpHandler;
+        }
+
+        #endregion Methods
+
         #region Constructors
 
         public CookieConnection()
@@ -63,8 +88,6 @@ namespace Hire_Hop_Interface.Interface.Connections
 
         #endregion Properties
 
-        #region Methods
-
         public void extractHeadersFromHandler()
         {
             var cookies = this._httpHandler.CookieContainer.GetCookies(new Uri(Request.hhMasterUrl));
@@ -72,28 +95,5 @@ namespace Hire_Hop_Interface.Interface.Connections
             this.password = cookies.FirstOrDefault(x => x.Name == "password").Value;
             this.key = cookies.FirstOrDefault(x => x.Name == "key").Value;
         }
-
-        private HttpClient constructClient()
-        {
-            this._httpClient = new HttpClient(this.httpHandler);
-            return this._httpClient;
-        }
-
-        private HttpClientHandler constructHandler()
-        {
-            this._httpHandler = new HttpClientHandler();
-            this._httpHandler.UseCookies = true;
-
-            if (this.email != null)
-            {
-                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("email", this.email, "/", Request.hhMasterDomain));
-                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("password", this.password, "/", Request.hhMasterDomain));
-                this._httpHandler.CookieContainer.Add(new System.Net.Cookie("key", this.key, "/", Request.hhMasterDomain));
-            }
-
-            return this._httpHandler;
-        }
-
-        #endregion Methods
     }
 }
