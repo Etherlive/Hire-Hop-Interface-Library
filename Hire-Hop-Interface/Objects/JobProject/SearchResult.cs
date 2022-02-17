@@ -38,6 +38,11 @@ namespace Hire_Hop_Interface.Objects.JobProject
             get { return this.id.StartsWith("p"); }
         }
 
+        public string job_name
+        {
+            get { return this.json.Value.GetProperty("JOB_NAME").GetString(); }
+        }
+
         public string trimmedId
         {
             get { return this.json.Value.GetProperty("ID").GetString().Replace("j", "").Replace("p", ""); }
@@ -76,7 +81,6 @@ namespace Hire_Hop_Interface.Objects.JobProject
             if (options.from.Length > 0) req.AddOrSetQuery("from_date", options.from);
             if (options.to.Length > 0) req.AddOrSetQuery("to_date", options.to);
             var res = await req.ExecuteWithCache();
-
 
             if (res.TryParseJson(out JsonElement? json))
             {
