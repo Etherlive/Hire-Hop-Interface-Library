@@ -43,6 +43,11 @@ namespace Hire_Hop_Interface.Objects.JobProject
             get { return this.json.Value.GetProperty("JOB_NAME").GetString(); }
         }
 
+        public DateTime jobDate
+        {
+            get { return DateTime.Parse(this.json.Value.GetProperty("JOB_DATE").GetString()); }
+        }
+
         public string trimmedId
         {
             get { return this.json.Value.GetProperty("ID").GetString().Replace("j", "").Replace("p", ""); }
