@@ -36,10 +36,15 @@ namespace Hire_Hop_Interface.Interface
 
                 if (res != null)
                 {
-                    int user_data_start = res.body.IndexOf("var user=") + 9;
-                    int user_data_end = res.body.IndexOf(";var check_server=");
+                    req = new Request("home.php", "GET", connection);
+                    var res_home = await req.Execute();
 
-                    string user_data = res.body.Substring(user_data_start, user_data_end - user_data_start);
+                    //int user_data_start = res_home.body.IndexOf("var user=") + 9;
+                    //int user_data_end = res_home.body.IndexOf(";var check_server=");
+
+                    //string user_data = res_home.body.Substring(user_data_start, user_data_end - user_data_start);
+
+                    string user_data = res_home.body.Split("var user=")[1].Split(";")[0];
 
                     try
                     {
