@@ -8,15 +8,8 @@ namespace Hire_Hop_Interface.Objects.JobProject
     {
         #region Classes
 
-        public class SearchResponse
+        public class SearchResponse : SearchCollection<SearchResult>
         {
-            #region Fields
-
-            public int max_page = -1;
-            public SearchResult[] results;
-
-            #endregion Fields
-
             #region Methods
 
             public async Task<Job[]> LoadAllJobs(CookieConnection cookie)
