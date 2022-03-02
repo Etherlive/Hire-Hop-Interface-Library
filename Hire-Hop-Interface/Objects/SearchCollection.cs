@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Hire_Hop_Interface.Objects
+﻿namespace Hire_Hop_Interface.Objects
 {
     public class SearchCollection<T>
     {
