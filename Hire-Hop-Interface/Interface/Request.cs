@@ -98,7 +98,14 @@ namespace Hire_Hop_Interface.Interface
                         {
                             if (json.Value.TryGetProperty("error", out JsonElement error))
                             {
-                                throw new Exception(Interface.Errors.errorStrings[error.GetInt32()]);
+                                if (error.TryGetInt32(out int e))
+                                {
+                                    throw new Exception(Interface.Errors.errorStrings[e]);
+                                }
+                                else
+                                {
+                                    throw new Exception("Parse Malfunction");
+                                }
                             }
                         }
 

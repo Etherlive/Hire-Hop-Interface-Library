@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
+using Hire_Hop_Interface.Interface.Connections;
+using Hire_Hop_Interface.Interface;
 
 namespace Hire_Hop_Interface.Objects
 {
@@ -12,22 +14,60 @@ namespace Hire_Hop_Interface.Objects
 
         public string Company
         {
-            get { return json.Value.GetProperty("COMPANY").GetString(); }
+            get { return json.Value.TryGetProperty("COMPANY", out JsonElement e) ? e.GetString() : ""; }
         }
 
-        public string Enail
+        public string Email
         {
-            get { return json.Value.GetProperty("EMAIL").GetString(); }
+            get { return json.Value.TryGetProperty("EMAIL", out JsonElement e) ? e.GetString() : ""; }
         }
 
         public string Name
         {
-            get { return json.Value.GetProperty("NAME").GetString(); }
+            get { return json.Value.TryGetProperty("NAME", out JsonElement e) ? e.GetString() : ""; }
         }
 
         #endregion Properties
 
         #region Methods
+
+        public static async Task<Contact> CreateNew(CookieConnection cookie, string company, string address, string telephone, string email)
+        {
+            var req = new Request("modules/contacts/save.php", "POST", cookie);
+            req.AddOrSetForm("COMPANY", company);
+            req.AddOrSetForm("FAX", "");
+            req.AddOrSetForm("VAT_NUMBER", "");
+            req.AddOrSetForm("SOURCE", "");
+            req.AddOrSetForm("WEB", "");
+            req.AddOrSetForm("NAME", "N/A");
+            req.AddOrSetForm("IMAGE_ID", "");
+            req.AddOrSetForm("JOB", "");
+            req.AddOrSetForm("DD", "");
+            req.AddOrSetForm("CELL", "");
+            req.AddOrSetForm("MEMO", "");
+            req.AddOrSetForm("ADDRESS", address);
+            req.AddOrSetForm("TELEPHONE", telephone);
+            req.AddOrSetForm("EMAIL", email);
+            req.AddOrSetForm("MAIL", "0");
+            req.AddOrSetForm("STATUS", "0");
+            req.AddOrSetForm("CLIENT", "0");
+            req.AddOrSetForm("VENUE", "0");
+            req.AddOrSetForm("SUB", "1");
+            req.AddOrSetForm("cID", "0");
+            req.AddOrSetForm("ID", "0");
+            req.AddOrSetForm("del", "false");
+            req.AddOrSetForm("RATING", "0");
+            //DEPOT_LIMITS: []
+
+            var res = await req.Execute();
+            if (res.TryParseJson(out JsonElement? json))
+            {
+                var j_enum = json.Value.GetProperty("rows").EnumerateArray();
+                j_enum.MoveNext();
+                return new Contact() { json = j_enum.Current.GetProperty("cell") };
+            }
+            return null;
+        }
 
         public static async Task<SearchCollection<Contact>> Search(Interface.Connections.CookieConnection cookie, int page = 1)
         {
