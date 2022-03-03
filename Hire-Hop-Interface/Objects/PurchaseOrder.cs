@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System;
 
 namespace Hire_Hop_Interface.Objects
 {
@@ -81,7 +82,53 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public static async Task<SearchCollection<PurchaseOrder>> Search(Interface.Connections.CookieConnection cookie, int page = 1)
+        public static async Task<PurchaseOrder> CreateNew(CookieConnection cookie, string jobId, string description, string reference, DateTime start, DateTime finish, string memo = "", string deliveryAddress = "")
+        {
+            var req = new Request("php_functions/subcontractors_save.php", "POST", cookie);
+            req.AddOrSetForm("ID", "0");
+            req.AddOrSetForm("main_id", jobId);
+            req.AddOrSetForm("type", "1");
+            req.AddOrSetForm("pers", "2926");
+            req.AddOrSetForm("internal", "0");
+            req.AddOrSetForm("depot", "4");
+            req.AddOrSetForm("desc", description);
+            req.AddOrSetForm("kind", "0");
+            req.AddOrSetForm("ref", reference);
+            req.AddOrSetForm("tax_total", "0.00");
+            req.AddOrSetForm("tax_rate", "0");
+            req.AddOrSetForm("memo", memo);
+            req.AddOrSetForm("addr", deliveryAddress);
+            req.AddOrSetForm("checkin", "1");
+            req.AddOrSetForm("checkout", "1");
+            req.AddOrSetForm("sceduled", "1");
+            req.AddOrSetForm("collect", "0");
+            req.AddOrSetForm("return", "0");
+            req.AddOrSetForm("fulfil", "1");
+            req.AddOrSetForm("novat", "0");
+            req.AddOrSetForm("res", "false");
+            req.AddOrSetForm("start", start.ToString("yyyy-MM-dd HH:mm"));
+            req.AddOrSetForm("finish", finish.ToString("yyyy-MM-dd HH:mm"));
+            req.AddOrSetForm("currency[CODE]", "GBP");
+            req.AddOrSetForm("currency[NAME]", "United Kingdom Pound");
+            req.AddOrSetForm("currency[SYMBOL]", "£");
+            req.AddOrSetForm("currency[DECIMALS]", "2");
+            req.AddOrSetForm("currency[MULTIPLIER]", "1");
+            req.AddOrSetForm("currency[NEGATIVE_FORMAT]", "1");
+            req.AddOrSetForm("currency[SYMBOL_POSITION]", "0");
+            req.AddOrSetForm("currency[DECIMAL_SEPARATOR]", ".");
+            req.AddOrSetForm("currency[THOUSAND_SEPARATOR]", ",");
+
+            var res = await req.Execute();
+            if (res.TryParseJson(out JsonElement? json))
+            {
+                var j_enum = json.Value.GetProperty("rows").EnumerateArray();
+                j_enum.MoveNext();
+                return new PurchaseOrder() { json = j_enum.Current };
+            }
+            return null;
+        }
+
+        public static async Task<SearchCollection<PurchaseOrder>> SearchForAll(Interface.Connections.CookieConnection cookie)
         {
             var req = new CacheableRequest("php_functions/subcontractors_list.php", "GET", cookie);
 
@@ -90,7 +137,7 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("fix", "0");
             req.AddOrSetQuery("_search", "false");
             req.AddOrSetQuery("rows", "10000");
-            req.AddOrSetQuery("page", page.ToString());
+            req.AddOrSetQuery("page", "1");
             req.AddOrSetQuery("nd", "1646206198206");
             req.AddOrSetQuery("sidx", "ID");
             req.AddOrSetQuery("sord", "desc");
@@ -103,30 +150,12 @@ namespace Hire_Hop_Interface.Objects
                 var rows = json.Value.GetProperty("rows").EnumerateArray();
                 while (rows.MoveNext())
                 {
-                    results.Add(new PurchaseOrder() { json = rows.Current.GetProperty("cell") });
+                    results.Add(new PurchaseOrder() { json = rows.Current });
                 }
 
                 return new SearchCollection<PurchaseOrder>() { results = results.ToArray(), max_page = 1 };
             }
             return null;
-        }
-
-        public static async Task<SearchCollection<PurchaseOrder>> SearchForAll(Interface.Connections.CookieConnection cookie)
-        {
-            var search_1 = await Search(cookie);
-
-            var search_actions = new Task<SearchCollection<PurchaseOrder>>[search_1.max_page - 2];
-
-            for (int i = 0; i < search_actions.Length; i++)
-            {
-                search_actions[i] = Search(cookie, i + 2);
-            }
-
-            Task.WaitAll(search_actions);
-
-            var all_results = search_1.results.Concat(search_actions.SelectMany(x => x.Result.results));
-
-            return new SearchCollection<PurchaseOrder>() { results = all_results.ToArray(), max_page = search_1.max_page };
         }
 
         #endregion Methods
