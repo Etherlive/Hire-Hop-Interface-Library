@@ -73,6 +73,11 @@ namespace Hire_Hop_Interface.Objects
             get { return json.Value.TryGetProperty("sub", out JsonElement e) ? e.GetString() : ""; }
         }
 
+        public string SUPPLIER_REF
+        {
+            get { return json.Value.TryGetProperty("SUPPLIER_REF", out JsonElement e) ? e.GetString() : ""; }
+        }
+
         public int TOTAL
         {
             get { return json.Value.TryGetProperty("TOTAL", out JsonElement e) ? e.GetInt32() : -1; }

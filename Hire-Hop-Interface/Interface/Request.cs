@@ -96,7 +96,7 @@ namespace Hire_Hop_Interface.Interface
 
                         if (r.TryParseJson(out JsonElement? json))
                         {
-                            if (json.Value.TryGetProperty("error", out JsonElement error))
+                            if (json.Value.TryGetProperty("error", out JsonElement error) && error.ValueKind == JsonValueKind.Number)
                             {
                                 if (error.TryGetInt32(out int e))
                                 {
