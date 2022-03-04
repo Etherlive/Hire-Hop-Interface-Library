@@ -100,11 +100,18 @@ namespace Hire_Hop_Interface.Interface
                             {
                                 if (error.TryGetInt32(out int e))
                                 {
-                                    throw new Exception(Interface.Errors.errorStrings[e]);
+                                    if (Errors.errorStrings.ContainsKey(e))
+                                    {
+                                        throw new Exception(Interface.Errors.errorStrings[e]);
+                                    }
+                                    else
+                                    {
+                                        throw new Exception($"Unkown Error {e}");
+                                    }
                                 }
                                 else
                                 {
-                                    throw new Exception("Parse Malfunction");
+                                    throw new Exception("Error Malformed");
                                 }
                             }
                         }
