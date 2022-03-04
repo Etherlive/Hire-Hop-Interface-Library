@@ -163,6 +163,26 @@ namespace Hire_Hop_Interface.Objects
             return null;
         }
 
+        public async Task AddLineItem(CookieConnection cookie, double qty, double unit, double total, double vat_rate, int vat_id, string desc)
+        {
+            var req = new Request("php_functions/subcontractors_save_item.php", "POST", cookie);
+            req.AddOrSetForm("id", "0");
+            req.AddOrSetForm("kind", "3");
+            req.AddOrSetForm("sub", ID.Replace("sub", ""));
+            req.AddOrSetForm("qty", qty.ToString());
+            req.AddOrSetForm("unit", unit.ToString());
+            req.AddOrSetForm("total", total.ToString());
+            req.AddOrSetForm("vat_rate", vat_rate.ToString());
+            req.AddOrSetForm("vat_id", vat_id.ToString());
+            req.AddOrSetForm("nominal", "38");
+            req.AddOrSetForm("selected", "");
+            req.AddOrSetForm("tz", " Europe/London");
+            req.AddOrSetForm("desc", desc);
+            req.AddOrSetForm("memo", "Imported From IC");
+
+            var res = await req.Execute();
+        }
+
         public async Task UpdateStatus(CookieConnection cookie, int status)
         {
             var req = new Request("php_functions/subcontractors_save_status.php", "POST", cookie);
