@@ -75,7 +75,7 @@ namespace Hire_Hop_Interface.Objects
 
         public string SUPPLIER_REF
         {
-            get { return json.Value.TryGetProperty("SUPPLIER_REF", out JsonElement e) ? e.GetString() : ""; }
+            get { return json.Value.GetProperty("data").TryGetProperty("SUPPLIER_REF", out JsonElement e) ? e.GetString() : ""; }
         }
 
         public int TOTAL
@@ -87,13 +87,13 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
-        public static async Task<PurchaseOrder> CreateNew(CookieConnection cookie, string jobId, string description, string reference, DateTime start, DateTime finish, string memo = "", string deliveryAddress = "")
+        public static async Task<PurchaseOrder> CreateNew(CookieConnection cookie, string jobId, string description, string reference, string supplierId, DateTime start, DateTime finish, string memo = "", string deliveryAddress = "")
         {
             var req = new Request("php_functions/subcontractors_save.php", "POST", cookie);
             req.AddOrSetForm("ID", "0");
             req.AddOrSetForm("main_id", jobId);
             req.AddOrSetForm("type", "1");
-            req.AddOrSetForm("pers", "2926");
+            req.AddOrSetForm("pers", supplierId);
             req.AddOrSetForm("internal", "0");
             req.AddOrSetForm("depot", "4");
             req.AddOrSetForm("desc", description);
@@ -161,6 +161,16 @@ namespace Hire_Hop_Interface.Objects
                 return new SearchCollection<PurchaseOrder>() { results = results.ToArray(), max_page = 1 };
             }
             return null;
+        }
+
+        public async Task UpdateStatus(CookieConnection cookie, int status)
+        {
+            var req = new Request("php_functions/subcontractors_save_status.php", "POST", cookie);
+            req.AddOrSetForm("id", ID.Replace("sub", ""));
+            req.AddOrSetForm("status", status.ToString());
+            req.AddOrSetForm("date", DateTime.Now.ToString("yyyy-MM-dd HH:mm"));
+
+            var res = await req.Execute();
         }
 
         #endregion Methods

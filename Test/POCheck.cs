@@ -17,9 +17,17 @@ namespace Test
         #region Methods
 
         [TestMethod]
-        public void EnsureGetNotes()
+        public void EnsureCreate()
         {
-            var t = PurchaseOrder.CreateNew(cookie, "1131", "Test PO", "PO8888888", DateTime.Now.AddDays(-2), DateTime.Now.AddDays(4));
+            var t = PurchaseOrder.CreateNew(cookie, "1131", "Test PO", "PO8888888", "2926", DateTime.Now.AddDays(-2), DateTime.Now.AddDays(4));
+            t.Wait();
+            Assert.IsNotNull(t.Result);
+        }
+
+        [TestMethod]
+        public void EnsureSearch()
+        {
+            var t = PurchaseOrder.SearchForAll(cookie);
             t.Wait();
             Assert.IsNotNull(t.Result);
         }
