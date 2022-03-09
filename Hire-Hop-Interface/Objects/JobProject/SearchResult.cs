@@ -147,7 +147,7 @@ namespace Hire_Hop_Interface.Objects.JobProject
 
             public int depot = -1, rows = 40, page = 1;
 
-            public string from = "", to = "", status = "0,1,2,3,4,5,6,7,8,9,10,11", job_name;
+            public string from = "", to = "", status = "0,1,2,3,4,5,6,7,8,9,10,11", job_name = "";
 
             public bool jobs = true, projects = false, open = false, closed = false, search = false, money_owed = false, is_late = false, mine = false, no_user = false, needs_bill = false;
 
