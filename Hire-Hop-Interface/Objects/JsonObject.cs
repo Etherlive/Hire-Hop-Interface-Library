@@ -22,7 +22,7 @@ namespace Hire_Hop_Interface.Objects
 
         #region Properties
 
-        public JsonElement? json { get; protected set; }
+        public JsonElement? json { get; set; }
 
         #endregion Properties
 
@@ -41,6 +41,11 @@ namespace Hire_Hop_Interface.Objects
             if (res.TryParseJson(out json))
             {
                 this.json = json;
+                if (this.json.Value.TryGetProperty("error", out JsonElement e))
+                {
+                    Console.WriteLine($"An Error Occurred: {e.ToString()}");
+                    return false;
+                }
                 return true;
             }
             return false;

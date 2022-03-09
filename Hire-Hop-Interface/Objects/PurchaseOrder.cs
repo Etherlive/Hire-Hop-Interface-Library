@@ -28,6 +28,11 @@ namespace Hire_Hop_Interface.Objects
             get { return json.Value.TryGetProperty("ID", out JsonElement e) ? e.GetString() : ""; }
         }
 
+        public PurchaseOrderLine[] items
+        {
+            get { return json.Value.GetProperty("data").TryGetProperty("ITEMS", out JsonElement e) ? e.EnumerateArray().Select(x => new PurchaseOrderLine() { json = x }).ToArray() : null; }
+        }
+
         public int JobId
         {
             get { return json.Value.GetProperty("data").TryGetProperty("MAIN_ID", out JsonElement e) ? e.GetInt32() : -1; }
@@ -126,9 +131,16 @@ namespace Hire_Hop_Interface.Objects
             var res = await req.Execute();
             if (res.TryParseJson(out JsonElement? json))
             {
-                var j_enum = json.Value.GetProperty("rows").EnumerateArray();
-                j_enum.MoveNext();
-                return new PurchaseOrder() { json = j_enum.Current };
+                if (json.Value.TryGetProperty("rows", out JsonElement e))
+                {
+                    var j_enum = e.EnumerateArray();
+                    j_enum.MoveNext();
+                    return new PurchaseOrder() { json = j_enum.Current };
+                }
+                else
+                {
+                    Console.WriteLine($"PO Create Failed: {json.Value.ToString()}");
+                }
             }
             return null;
         }
