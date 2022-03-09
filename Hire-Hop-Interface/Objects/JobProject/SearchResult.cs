@@ -83,6 +83,8 @@ namespace Hire_Hop_Interface.Objects.JobProject
             req.AddOrSetQuery("sidx", "OUT_DATE");
             req.AddOrSetQuery("sord", "asc");
 
+            if (options.job_name.Length > 0) req.AddOrSetQuery("JOB_NAME", options.job_name);
+
             if (options.from.Length > 0) req.AddOrSetQuery("from_date", options.from);
             if (options.to.Length > 0) req.AddOrSetQuery("to_date", options.to);
             var res = await req.ExecuteWithCache();
