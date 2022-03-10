@@ -102,7 +102,14 @@ namespace Hire_Hop_Interface.Interface
                                 {
                                     if (Errors.errorStrings.ContainsKey(e))
                                     {
-                                        throw new Exception(Interface.Errors.errorStrings[e]);
+                                        if (e == 12)
+                                        {
+                                            Console.Write(Interface.Errors.errorStrings[e]);
+                                        }
+                                        else
+                                        {
+                                            throw new Exception(Interface.Errors.errorStrings[e]);
+                                        }
                                     }
                                     else
                                     {

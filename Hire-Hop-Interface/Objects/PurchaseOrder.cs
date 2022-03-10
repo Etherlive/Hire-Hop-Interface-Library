@@ -139,6 +139,11 @@ namespace Hire_Hop_Interface.Objects
                 }
                 else
                 {
+                    if (json.Value.GetProperty("error").ToString().Contains("too many transactions"))
+                    {
+                        System.Threading.Thread.Sleep(60000);
+                        return await CreateNew(cookie, jobId, description, reference, supplierId, start, finish, memo, deliveryAddress);
+                    }
                     Console.WriteLine($"PO Create Failed On Job {jobId}: {json.Value.ToString()}");
                 }
             }
