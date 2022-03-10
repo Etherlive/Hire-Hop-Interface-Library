@@ -139,7 +139,7 @@ namespace Hire_Hop_Interface.Objects
                 }
                 else
                 {
-                    Console.WriteLine($"PO Create Failed: {json.Value.ToString()}");
+                    Console.WriteLine($"PO Create Failed On Job {jobId}: {json.Value.ToString()}");
                 }
             }
             return null;
