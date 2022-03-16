@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace Hire_Hop_Interface.Interface.Caching
@@ -8,7 +8,7 @@ namespace Hire_Hop_Interface.Interface.Caching
     {
         #region Fields
 
-        private Dictionary<string, CachedResponse> responseStore = new Dictionary<string, CachedResponse>();
+        private ConcurrentDictionary<string, CachedResponse> responseStore = new ConcurrentDictionary<string, CachedResponse>();
 
         #endregion Fields
 
