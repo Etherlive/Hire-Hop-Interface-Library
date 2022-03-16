@@ -163,26 +163,30 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("type", "11");
             req.AddOrSetQuery("fix", "0");
             req.AddOrSetQuery("_search", "false");
-            req.AddOrSetQuery("rows", "10000");
-            req.AddOrSetQuery("page", "1");
+            req.AddOrSetQuery("rows", "200");
             req.AddOrSetQuery("nd", "1646206198206");
             req.AddOrSetQuery("sidx", "ID");
             req.AddOrSetQuery("sord", "desc");
 
-            var res = await req.ExecuteWithCache();
+            int page = 1;
+            List<PurchaseOrder> results = new List<PurchaseOrder>();
 
-            if (res.TryParseJson(out JsonElement? json))
+            while (results.Count % 200 == 0)
             {
-                List<PurchaseOrder> results = new List<PurchaseOrder>();
-                var rows = json.Value.GetProperty("rows").EnumerateArray();
-                while (rows.MoveNext())
-                {
-                    results.Add(new PurchaseOrder() { json = rows.Current });
-                }
+                req.AddOrSetQuery("page", page.ToString());
+                var res = await req.ExecuteWithCache();
 
-                return new SearchCollection<PurchaseOrder>() { results = results.ToArray(), max_page = 1 };
+                if (res.TryParseJson(out JsonElement? json))
+                {
+                    var rows = json.Value.GetProperty("rows").EnumerateArray();
+                    while (rows.MoveNext())
+                    {
+                        results.Add(new PurchaseOrder() { json = rows.Current });
+                    }
+                }
+                page++;
             }
-            return null;
+            return new SearchCollection<PurchaseOrder>() { results = results.ToArray(), max_page = page };
         }
 
         public async Task AddLineItem(CookieConnection cookie, double qty, double unit, double total, double vat_rate, int vat_id, string desc)
