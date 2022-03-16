@@ -13,6 +13,11 @@ namespace Hire_Hop_Interface.Objects
     {
         #region Properties
 
+        public string CREATE_USER
+        {
+            get { return json.Value.GetProperty("data").TryGetProperty("CREATE_USER", out JsonElement e) ? e.GetString() : ""; }
+        }
+
         public string CURRENCY
         {
             get { return json.Value.TryGetProperty("CURRENCY", out JsonElement e) ? e.GetString() : ""; }
@@ -196,6 +201,16 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetForm("tz", " Europe/London");
             req.AddOrSetForm("desc", desc);
             req.AddOrSetForm("memo", "Imported From IC");
+
+            var res = await req.Execute();
+        }
+
+        public async Task Delete(CookieConnection cookie)
+        {
+            var req = new Request("php_functions/subcontractors_delete.php", "POST", cookie);
+            req.AddOrSetForm("id", ID.Replace("sub", ""));
+            req.AddOrSetForm("main_id", "0");
+            req.AddOrSetForm("type", "11");
 
             var res = await req.Execute();
         }
