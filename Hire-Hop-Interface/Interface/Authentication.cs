@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Interface
@@ -44,14 +45,15 @@ namespace Hire_Hop_Interface.Interface
 
                     //string user_data = res_home.body.Substring(user_data_start, user_data_end - user_data_start);
 
-                    string user_data = res_home.body.Split("var user=")[1].Split(";")[0];
-
                     try
                     {
+                        string user_data = res_home.body.Split("var user=")[1].Split(";")[0];
                         connection.user_data = JsonSerializer.Deserialize<JsonElement>(user_data);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Console.WriteLine($"Failed To Load User Data For {username}\n{e.ToString()}");
+                        return false;
                     }
 
                     connection.extractHeadersFromHandler();
