@@ -52,8 +52,7 @@ namespace Hire_Hop_Interface.Interface
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine($"Failed To Load User Data For {username}\n{e.ToString()}");
-                        return false;
+                        return await Login(connection, username, password, company);
                     }
 
                     connection.extractHeadersFromHandler();
