@@ -91,13 +91,17 @@ namespace Hire_Hop_Interface.Objects
             if (res.TryParseJson(out JsonElement? json))
             {
                 List<Contact> results = new List<Contact>();
-                var rows = json.Value.GetProperty("rows").EnumerateArray();
-                while (rows.MoveNext())
+                if (json.Value.TryGetProperty("rows", out JsonElement e))
                 {
-                    results.Add(new Contact() { json = rows.Current.GetProperty("cell") });
-                }
+                    var rows = e.EnumerateArray();
+                    while (rows.MoveNext())
+                    {
+                        results.Add(new Contact() { json = rows.Current.GetProperty("cell") });
+                    }
 
-                return new SearchCollection<Contact>() { results = results.ToArray(), max_page = json.Value.GetProperty("total").GetInt32() };
+                    return new SearchCollection<Contact>() { results = results.ToArray(), max_page = json.Value.GetProperty("total").GetInt32() };
+                }
+                return null;
             }
             return null;
         }

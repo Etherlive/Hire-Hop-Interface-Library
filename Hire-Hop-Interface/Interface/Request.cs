@@ -83,13 +83,14 @@ namespace Hire_Hop_Interface.Interface
                 if (this.urlFormValues.Count > 0)
                 {
                     string form = string.Join("&", this.urlFormValues.Select(x => $"{HttpUtility.UrlEncode(x.Key)}={HttpUtility.UrlEncode(x.Value)}"));
-                    request.Content = new StringContent(form);
+                    request.Content = new StringContent(form,System.Text.Encoding.UTF8);
                     request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
                 }
 
                 using (var response = await this.cookie.httpClient.SendAsync(request))
                 {
-                    string content = await response.Content.ReadAsStringAsync();
+                    var bcontent = await response.Content.ReadAsByteArrayAsync();
+                    string content = System.Text.Encoding.UTF8.GetString(bcontent);
                     if (response.IsSuccessStatusCode)
                     {
                         Response r = new Response(this, content);
