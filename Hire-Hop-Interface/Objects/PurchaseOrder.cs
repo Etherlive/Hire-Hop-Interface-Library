@@ -189,7 +189,7 @@ namespace Hire_Hop_Interface.Objects
             return new SearchCollection<PurchaseOrder>() { results = results.ToArray(), max_page = page };
         }
 
-        public async Task AddLineItem(CookieConnection cookie, double qty, double unit, double total, double vat_rate, int vat_id, string desc)
+        public async Task AddLineItem(CookieConnection cookie, double qty, double unit, double total, double vat_rate, int vat_id, string desc, string memo, int nominalCode = 38)
         {
             var req = new Request("php_functions/subcontractors_save_item.php", "POST", cookie);
             req.AddOrSetForm("id", "0");
@@ -200,11 +200,11 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetForm("total", total.ToString());
             req.AddOrSetForm("vat_rate", vat_rate.ToString());
             req.AddOrSetForm("vat_id", vat_id.ToString());
-            req.AddOrSetForm("nominal", "38");
+            req.AddOrSetForm("nominal", nominalCode.ToString());
             req.AddOrSetForm("selected", "");
             req.AddOrSetForm("tz", " Europe/London");
             req.AddOrSetForm("desc", desc);
-            req.AddOrSetForm("memo", "Imported From IC");
+            req.AddOrSetForm("memo", memo);
 
             var res = await req.Execute();
         }

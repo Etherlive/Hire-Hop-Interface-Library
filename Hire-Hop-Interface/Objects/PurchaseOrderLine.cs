@@ -22,6 +22,10 @@ namespace Hire_Hop_Interface.Objects
         {
             get { return json.Value.TryGetProperty("DESCRIPTION", out JsonElement e) ? e.GetString() : ""; }
         }
+        public string MEMO
+        {
+            get { return json.Value.TryGetProperty("MEMO", out JsonElement e) ? e.GetString() : ""; }
+        }
 
         public int ID
         {
