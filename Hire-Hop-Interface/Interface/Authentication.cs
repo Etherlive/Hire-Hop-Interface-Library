@@ -15,7 +15,7 @@ namespace Hire_Hop_Interface.Interface
             return res.body.Contains("<title>HireHop</title>");
         }
 
-        public static async Task<bool> Login(Connections.CookieConnection connection, string username, string password, string company = "ELTH")
+        public static async Task<bool> Login(Connections.CookieConnection connection, string username, string password, string company = "ELTH", int retryDepth = 0)
         {
             var req = new Request("login.php", "post", connection);
             req.AddOrSetForm("loc", "home.php");
@@ -52,8 +52,9 @@ namespace Hire_Hop_Interface.Interface
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e.Message);
-                        return await Login(connection, username, password, company);
+                        Console.WriteLine($"An Error Occurred While Signing In");
+                        if (retryDepth < 3) return await Login(connection, username, password, company, retryDepth+1);
+                        else return false;
                     }
 
                     connection.extractHeadersFromHandler();
