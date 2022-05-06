@@ -2,3 +2,4 @@
 obj/
 bin/
 Test/Details.cs
+Test/Auth.cs

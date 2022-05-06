@@ -52,6 +52,7 @@ namespace Hire_Hop_Interface.Interface
                     }
                     catch (Exception e)
                     {
+                        Console.WriteLine(e.Message);
                         return await Login(connection, username, password, company);
                     }
 
