@@ -16,6 +16,7 @@ namespace Hire_Hop_Interface.Objects
         public Bill bill;
         public Costs costs;
         public DateTime lastModified;
+
         public class Costs
         {
             #region Fields
@@ -38,9 +39,10 @@ namespace Hire_Hop_Interface.Objects
             this.job = job;
         }
 
-        public async Task LoadMisc(CookieConnection cookie)
+        public async Task LoadMisc(CookieConnection cookie, DefaultCost[] labourCosts)
         {
             bill = await this.CalculateBill(cookie);
+            costs = await CalculateCosts(cookie, labourCosts);
             lastModified = await GetLastModified(cookie);
         }
 
@@ -51,6 +53,73 @@ namespace Hire_Hop_Interface.Objects
             string d = log != null && log.results.Length > 0 ? log.results[0].GetProperty("cell").GetProperty("date_time").GetString() : null;
 
             return d != null ? DateTime.Parse(d) : DateTime.MinValue;
+        }
+
+        public async Task<Costs> CalculateCosts(CookieConnection cookie, DefaultCost[] labourCosts)
+        {
+            Costs c = new Costs();
+            var bItems = await JobItem.GetJobItems(cookie, job);
+
+            if (bItems.results.Length > 0)
+            {
+                await DefaultCost.LoadCosts(cookie, bItems.results, labourCosts);
+            }
+
+            foreach (var item in bItems.results)
+            {
+                double qty = item.qty;
+                double price = item.PRICE;
+
+                c.supplyingPrice += price;
+
+                if (item.flag != 0 && item.json.Value.TryGetProperty("CUSTOM_FIELDS", out var fields))
+                {
+                    double cost = 0;
+                    if (fields.ValueKind == JsonValueKind.Object && fields.TryGetProperty("ethl_inventory_cost", out var eic))
+                    {
+                        if (eic.ValueKind == JsonValueKind.Object && eic.TryGetProperty("value", out var eic_v))
+                        {
+                            cost = eic_v.ValueKind == JsonValueKind.String ? double.Parse(eic_v.GetString()) * qty : 0;
+
+                            switch (item.kind)
+                            {
+                                case "2":
+                                    c.equipmentCost += cost;
+                                    break;
+                                case "3":
+                                    c.serviceCost += cost;
+                                    break;
+                                case "4":
+                                    c.resourceCost += cost;
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    switch (item.kind)
+                    {
+                        case "2":
+                            if (DefaultCost.inventory_cost_margins.TryGetValue(item.id, out var icm))
+                            {
+                                c.equipmentCost += icm.cost * qty;
+                            }
+                            break;
+                        case "3":
+                            Console.WriteLine("Unable to load default cost for service: " + item.title);
+                            break;
+                        case "4":
+                            if (DefaultCost.labour_cost_margins.TryGetValue(item.id, out var lcm))
+                            {
+                                c.equipmentCost += lcm.cost * qty;
+                            }
+                            break;
+                    }
+                }
+            }
+            c.totalCost = c.equipmentCost + c.resourceCost + c.serviceCost;
+            return c;
         }
 
         public async Task<Bill> CalculateBill(CookieConnection cookie)

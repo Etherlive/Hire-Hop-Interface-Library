@@ -92,8 +92,10 @@ namespace Hire_Hop_Interface.Interface
                     var bcontent = await response.Content.ReadAsByteArrayAsync();
                     string content = System.Text.Encoding.UTF8.GetString(bcontent);
 
-                    if (content.Contains("504 Gateway Time-out")) {
-                        System.Threading.Thread.Sleep(1000);
+                    if (content.Contains("504 Gateway Time-out") || content.Contains("too much traffic"))
+                    {
+                        Console.WriteLine($"Request To {urlWP} Expired Retrying @ {DateTime.Now.ToString("HH/mm/ss")}");
+                        System.Threading.Thread.Sleep(5000);
                         return await Execute(); 
                     }
 
