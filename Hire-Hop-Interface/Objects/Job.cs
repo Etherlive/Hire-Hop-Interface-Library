@@ -13,7 +13,7 @@ namespace Hire_Hop_Interface.Objects
 
         private List<CustomField> _customFields;
 
-        private string jobId;
+        public string jobId { get; private set; }
 
         #endregion Fields
 
@@ -118,7 +118,7 @@ namespace Hire_Hop_Interface.Objects
         {
             get
             {
-                return json.HasValue ? DateTime.Parse(json.Value.GetProperty("JOB_END").GetString()) : DateTime.MinValue;
+                return json.HasValue && json.Value.TryGetProperty("JOB_END", out var e) && e.ValueKind != JsonValueKind.Null ? DateTime.Parse(e.GetString()) : DateTime.MinValue;
             }
         }
 
@@ -142,7 +142,7 @@ namespace Hire_Hop_Interface.Objects
         {
             get
             {
-                return json.HasValue ? DateTime.Parse(json.Value.GetProperty("RETURN_DATE").GetString()) : DateTime.MinValue;
+                return json.HasValue && json.Value.TryGetProperty("RETURN_DATE", out var e) && e.ValueKind != JsonValueKind.Null ? DateTime.Parse(e.GetString()) : DateTime.MinValue;
             }
         }
 
