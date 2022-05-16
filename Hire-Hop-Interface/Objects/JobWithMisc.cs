@@ -20,7 +20,7 @@ namespace Hire_Hop_Interface.Objects
         {
             #region Fields
 
-            public float supplyingPrice, serviceCost, equipmentCost, resourceCost, totalCost;
+            public double supplyingPrice, serviceCost, equipmentCost, resourceCost, totalCost;
 
             #endregion Fields
         }
@@ -28,7 +28,7 @@ namespace Hire_Hop_Interface.Objects
         {
             #region Fields
 
-            public float accrued, totalCredit, totalDebit;
+            public double accrued, totalCredit, totalDebit;
 
             #endregion Fields
         }
@@ -48,7 +48,9 @@ namespace Hire_Hop_Interface.Objects
         {
             var log = await GetJobHistory(cookie);
 
-            return log != null && log.results.Length > 0 ? DateTime.Parse(log.results[0].GetProperty("cell").GetProperty("date_time").GetString()) : null;
+            string d = log != null && log.results.Length > 0 ? log.results[0].GetProperty("cell").GetProperty("date_time").GetString() : null;
+
+            return d != null ? DateTime.Parse(d) : DateTime.MinValue;
         }
 
         public async Task<Bill> CalculateBill(CookieConnection cookie)
@@ -63,16 +65,16 @@ namespace Hire_Hop_Interface.Objects
                     switch (k.GetInt32())
                     {
                         case 0:
-                            b.accrued += k.GetProperty("accrued").GetInt32();
+                            b.accrued += e.GetProperty("accrued").GetDouble();
                             break;
                         case 1:
-                            b.totalDebit += k.GetProperty("debit").GetInt32();
+                            b.totalDebit += e.GetProperty("debit").GetDouble();
                             break;
                         case 2:
-                            b.totalCredit += k.GetProperty("credit").GetInt32();
+                            b.totalCredit += e.GetProperty("credit").GetDouble();
                             break;
                         case 3:
-                            b.totalCredit += k.GetProperty("credit").GetInt32();
+                            b.totalCredit += e.GetProperty("credit").GetDouble();
                             break;
                         default:
                             break;
@@ -86,13 +88,14 @@ namespace Hire_Hop_Interface.Objects
         public async Task<SearchCollection<JsonElement>> GetJobHistory(CookieConnection cookie)
         {
             var req = new CacheableRequest("php_functions/log_list.php", "POST", cookie);
-            req.AddOrSetForm("main_id", this.job.jobId);
-            req.AddOrSetForm("type", "1");
-            req.AddOrSetForm("_search", "false");
-            req.AddOrSetForm("rows", "100");
-            req.AddOrSetForm("page", "1");
-            req.AddOrSetForm("sidx", "date_time");
-            req.AddOrSetForm("sord", "desc");
+            req.AddOrSetQuery("main_id", this.job.jobId);
+            req.AddOrSetQuery("type", "1");
+            req.AddOrSetQuery("_search", "false");
+            req.AddOrSetQuery("nd", "1631267281622");
+            req.AddOrSetQuery("rows", "100");
+            req.AddOrSetQuery("page", "1");
+            req.AddOrSetQuery("sidx", "date_time");
+            req.AddOrSetQuery("sord", "desc");
 
             var d = await req.ExecuteWithCache();
 
@@ -119,16 +122,16 @@ namespace Hire_Hop_Interface.Objects
             string date_str = $"{DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
 
             var req = new CacheableRequest("php_functions/billing_list.php", "POST", cookie);
-            req.AddOrSetForm("main_id", this.job.jobId);
-            req.AddOrSetForm("type", "1");
-            req.AddOrSetForm("local", date_str);
-            req.AddOrSetForm("tz", "Europe/London");
-            req.AddOrSetForm("fix", "0");
-            req.AddOrSetForm("_search", "false");
-            req.AddOrSetForm("rows", "10000");
-            req.AddOrSetForm("page", "1");
-            req.AddOrSetForm("sidx", "");
-            req.AddOrSetForm("sord", "asc");
+            req.AddOrSetQuery("main_id", this.job.jobId);
+            req.AddOrSetQuery("type", "1");
+            req.AddOrSetQuery("local", date_str);
+            req.AddOrSetQuery("tz", "Europe/London");
+            req.AddOrSetQuery("fix", "0");
+            req.AddOrSetQuery("_search", "false");
+            req.AddOrSetQuery("rows", "10000");
+            req.AddOrSetQuery("page", "1");
+            req.AddOrSetQuery("sidx", "");
+            req.AddOrSetQuery("sord", "asc");
 
             var d = await req.ExecuteWithCache();
 

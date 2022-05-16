@@ -91,10 +91,15 @@ namespace Hire_Hop_Interface.Interface
                 {
                     var bcontent = await response.Content.ReadAsByteArrayAsync();
                     string content = System.Text.Encoding.UTF8.GetString(bcontent);
+
+                    if (content.Contains("504 Gateway Time-out")) {
+                        System.Threading.Thread.Sleep(1000);
+                        return await Execute(); 
+                    }
+
                     if (response.IsSuccessStatusCode)
                     {
                         Response r = new Response(this, content);
-
                         if (r.TryParseJson(out JsonElement? json))
                         {
                             if (json.Value.TryGetProperty("error", out JsonElement error) && error.ValueKind == JsonValueKind.Number)
