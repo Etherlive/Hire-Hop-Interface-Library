@@ -168,20 +168,28 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("sidx", "ID");
             req.AddOrSetQuery("sord", "desc");
 
-            int page = 1;
+            int page = 1, lastCount = 0;
             List<PurchaseOrder> results = new List<PurchaseOrder>();
 
-            while (results.Count % 200 == 0)
+            while (lastCount != results.Count || page == 1)
             {
+                lastCount = results.Count;
                 req.AddOrSetQuery("page", page.ToString());
                 var res = await req.ExecuteWithCache();
 
                 if (res.TryParseJson(out JsonElement? json))
                 {
-                    var rows = json.Value.GetProperty("rows").EnumerateArray();
-                    while (rows.MoveNext())
+                    if (json.Value.TryGetProperty("rows", out var r))
                     {
-                        results.Add(new PurchaseOrder() { json = rows.Current });
+                        var rows = r.EnumerateArray();
+                        while (rows.MoveNext())
+                        {
+                            results.Add(new PurchaseOrder() { json = rows.Current });
+                        }
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
                 page++;
