@@ -16,6 +16,7 @@ namespace Hire_Hop_Interface.Objects
         public Bill bill;
         public Costs costs;
         public DateTime lastModified;
+        public JobItem[] items;
 
         public class Costs
         {
@@ -42,8 +43,8 @@ namespace Hire_Hop_Interface.Objects
         public async Task LoadMisc(CookieConnection cookie, DefaultCost[] labourCosts)
         {
             bill = await this.CalculateBill(cookie);
-            costs = await CalculateCosts(cookie, labourCosts);
-            lastModified = await GetLastModified(cookie);
+            costs = await this.CalculateCosts(cookie, labourCosts);
+            lastModified = await this.GetLastModified(cookie);
         }
 
         public async Task<DateTime> GetLastModified(CookieConnection cookie)
@@ -60,6 +61,7 @@ namespace Hire_Hop_Interface.Objects
             Costs c = new Costs();
             var bItems = await JobItem.GetJobItems(cookie, job);
 
+
             if (bItems.results.Length > 0)
             {
                 await DefaultCost.LoadCosts(cookie, bItems.results, labourCosts);
@@ -67,6 +69,7 @@ namespace Hire_Hop_Interface.Objects
 
             foreach (var item in bItems.results)
             {
+                item.jobId = job.jobId;
                 double qty = item.qty;
                 double price = item.PRICE;
 
@@ -118,6 +121,8 @@ namespace Hire_Hop_Interface.Objects
                     }
                 }
             }
+            items = bItems.results;
+
             c.totalCost = c.equipmentCost + c.resourceCost + c.serviceCost;
             return c;
         }

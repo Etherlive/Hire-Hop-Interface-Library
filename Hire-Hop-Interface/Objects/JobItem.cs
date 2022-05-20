@@ -11,6 +11,7 @@ namespace Hire_Hop_Interface.Objects
 {
     public class JobItem : JsonObject
     {
+        public string jobId { get; set; }
         public string id
         {
             get
