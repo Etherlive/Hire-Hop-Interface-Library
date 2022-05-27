@@ -38,11 +38,6 @@ namespace Hire_Hop_Interface.Objects.JobProject
             get { return this.id.StartsWith("p"); }
         }
 
-        public int STATUS
-        {
-            get { return this.json.Value.GetProperty("STATUS").GetInt32(); }
-        }
-
         public string job_name
         {
             get { return this.json.Value.GetProperty("JOB_NAME").GetString(); }
@@ -51,6 +46,11 @@ namespace Hire_Hop_Interface.Objects.JobProject
         public DateTime jobDate
         {
             get { return DateTime.Parse(this.json.Value.GetProperty("JOB_DATE").GetString()); }
+        }
+
+        public int STATUS
+        {
+            get { return this.json.Value.GetProperty("STATUS").GetInt32(); }
         }
 
         public string trimmedId

@@ -1,7 +1,6 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Hire_Hop_Interface.Interface;
 using Hire_Hop_Interface.Interface.Caching;
-using Hire_Hop_Interface.Objects;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test
 {

@@ -1,9 +1,6 @@
 ﻿using Hire_Hop_Interface.Interface;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Hire_Hop_Interface.Interface.Connections;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test
 {
