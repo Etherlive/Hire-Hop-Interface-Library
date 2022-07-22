@@ -13,8 +13,6 @@ namespace Hire_Hop_Interface.Objects
 
         private List<CustomField> _customFields;
 
-        public string jobId { get; private set; }
-
         #endregion Fields
 
         #region Methods
@@ -126,6 +124,8 @@ namespace Hire_Hop_Interface.Objects
         {
             get { return this.json.Value.GetProperty("ID").GetString(); }
         }
+
+        public string jobId { get; private set; }
 
         public string name
         { get { return json.HasValue ? json.Value.GetProperty("JOB_NAME").GetString() : null; } }

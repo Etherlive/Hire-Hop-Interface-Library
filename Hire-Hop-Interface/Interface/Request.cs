@@ -83,7 +83,7 @@ namespace Hire_Hop_Interface.Interface
                 if (this.urlFormValues.Count > 0)
                 {
                     string form = string.Join("&", this.urlFormValues.Select(x => $"{HttpUtility.UrlEncode(x.Key)}={HttpUtility.UrlEncode(x.Value)}"));
-                    request.Content = new StringContent(form,System.Text.Encoding.UTF8);
+                    request.Content = new StringContent(form, System.Text.Encoding.UTF8);
                     request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
                 }
 
@@ -96,7 +96,7 @@ namespace Hire_Hop_Interface.Interface
                     {
                         Console.WriteLine($"Request To {urlWP} Expired Retrying @ {DateTime.Now.ToString("HH/mm/ss")}");
                         System.Threading.Thread.Sleep(5000);
-                        return await Execute(); 
+                        return await Execute();
                     }
 
                     if (response.IsSuccessStatusCode)

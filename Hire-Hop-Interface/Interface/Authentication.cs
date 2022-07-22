@@ -53,7 +53,7 @@ namespace Hire_Hop_Interface.Interface
                     catch (Exception e)
                     {
                         Console.WriteLine($"An Error Occurred While Signing In");
-                        if (retryDepth < 3) return await Login(connection, username, password, company, retryDepth+1);
+                        if (retryDepth < 3) return await Login(connection, username, password, company, retryDepth + 1);
                         else return false;
                     }
 

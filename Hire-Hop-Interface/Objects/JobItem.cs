@@ -1,9 +1,6 @@
 ﻿using Hire_Hop_Interface.Interface.Caching;
 using Hire_Hop_Interface.Interface.Connections;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -11,14 +8,8 @@ namespace Hire_Hop_Interface.Objects
 {
     public class JobItem : JsonObject
     {
-        public string jobId { get; set; }
-        public string id
-        {
-            get
-            {
-                return json.HasValue ? json.Value.GetProperty("ID").GetString() : null;
-            }
-        }
+        #region Properties
+
         public int flag
         {
             get
@@ -26,6 +17,17 @@ namespace Hire_Hop_Interface.Objects
                 return json.HasValue ? int.Parse(json.Value.GetProperty("FLAG").GetString()) : -1;
             }
         }
+
+        public string id
+        {
+            get
+            {
+                return json.HasValue ? json.Value.GetProperty("ID").GetString() : null;
+            }
+        }
+
+        public string jobId { get; set; }
+
         public string kind
         {
             get
@@ -33,13 +35,7 @@ namespace Hire_Hop_Interface.Objects
                 return json.HasValue ? json.Value.GetProperty("kind").GetString() : null;
             }
         }
-        public double qty
-        {
-            get
-            {
-                return json.HasValue ? double.Parse(json.Value.GetProperty("qty").GetString()) : -1;
-            }
-        }
+
         public double PRICE
         {
             get
@@ -47,12 +43,50 @@ namespace Hire_Hop_Interface.Objects
                 return json.HasValue ? double.Parse(json.Value.GetProperty("PRICE").GetString()) : -1;
             }
         }
+
+        public double qty
+        {
+            get
+            {
+                return json.HasValue ? double.Parse(json.Value.GetProperty("qty").GetString()) : -1;
+            }
+        }
+
         public string title
         {
             get
             {
                 return json.HasValue ? json.Value.GetProperty("title").GetString() : "";
             }
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+        public static async Task<SearchCollection<JobItem>> GetJobItems(CookieConnection cookie, Job job)
+        {
+            var req = new CacheableRequest("frames/items_to_supply_list.php", "POST", cookie);
+            req.AddOrSetForm("job", job.jobId);
+
+            var d = await req.ExecuteWithCache();
+
+            if (d.TryParseJson(out var json))
+            {
+                if (json.Value.TryGetProperty("items", out var e))
+                {
+                    List<JobItem> l = new List<JobItem>();
+                    var a = e.EnumerateArray();
+
+                    while (a.MoveNext())
+                    {
+                        l.Add(new JobItem() { json = a.Current });
+                    }
+
+                    return new SearchCollection<JobItem>() { results = l.ToArray(), max_page = 1 };
+                }
+            }
+            return null;
         }
 
         public async Task<bool> ProcessCost(CookieConnection cookie, DefaultCost[] labourCosts)
@@ -101,29 +135,6 @@ namespace Hire_Hop_Interface.Objects
             return false;
         }
 
-        public static async Task<SearchCollection<JobItem>> GetJobItems(CookieConnection cookie, Job job)
-        {
-            var req = new CacheableRequest("frames/items_to_supply_list.php", "POST", cookie);
-            req.AddOrSetForm("job", job.jobId);
-
-            var d = await req.ExecuteWithCache();
-
-            if (d.TryParseJson(out var json))
-            {
-                if (json.Value.TryGetProperty("items", out var e))
-                {
-                    List<JobItem> l = new List<JobItem>();
-                    var a = e.EnumerateArray();
-
-                    while (a.MoveNext())
-                    {
-                        l.Add(new JobItem() { json = a.Current });
-                    }
-
-                    return new SearchCollection<JobItem>() { results = l.ToArray(), max_page = 1 };
-                }
-            }
-            return null;
-        }
+        #endregion Methods
     }
 }

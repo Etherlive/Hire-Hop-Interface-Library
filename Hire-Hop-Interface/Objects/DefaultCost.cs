@@ -1,35 +1,24 @@
 ﻿using Hire_Hop_Interface.Interface.Caching;
 using Hire_Hop_Interface.Interface.Connections;
-using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 
 namespace Hire_Hop_Interface.Objects
 {
     public class DefaultCost : JsonObject
     {
-        public class CostMargin
-        {
-            #region Fields
+        #region Fields
 
-            public double cost, margin;
-
-            #endregion Fields
-        }
-
-        public static ConcurrentDictionary<string, CostMargin> inventory_cost_margins = new ConcurrentDictionary<string, CostMargin>(), 
+        public static ConcurrentDictionary<string, CostMargin> inventory_cost_margins = new ConcurrentDictionary<string, CostMargin>(),
             labour_cost_margins = new ConcurrentDictionary<string, CostMargin>();
 
-        public int kind
-        {
-            get
-            {
-                return json.HasValue ? json.Value.GetProperty("kind").GetInt32() : -1;
-            }
-        }
+        #endregion Fields
+
+        #region Properties
+
         public string id
         {
             get
@@ -38,10 +27,17 @@ namespace Hire_Hop_Interface.Objects
             }
         }
 
-        public static Task LoadCosts(CookieConnection cookie, JobItem[] jobItems, DefaultCost[] labourCosts)
+        public int kind
         {
-            return Task.WhenAll(jobItems.Select(x => x.ProcessCost(cookie, labourCosts)).ToArray());
+            get
+            {
+                return json.HasValue ? json.Value.GetProperty("kind").GetInt32() : -1;
+            }
         }
+
+        #endregion Properties
+
+        #region Methods
 
         public static async Task<SearchCollection<DefaultCost>> GetAllLabourCosts(Interface.Connections.CookieConnection cookie)
         {
@@ -70,5 +66,25 @@ namespace Hire_Hop_Interface.Objects
             }
             return null;
         }
+
+        public static Task LoadCosts(CookieConnection cookie, JobItem[] jobItems, DefaultCost[] labourCosts)
+        {
+            return Task.WhenAll(jobItems.Select(x => x.ProcessCost(cookie, labourCosts)).ToArray());
+        }
+
+        #endregion Methods
+
+        #region Classes
+
+        public class CostMargin
+        {
+            #region Fields
+
+            public double cost, margin;
+
+            #endregion Fields
+        }
+
+        #endregion Classes
     }
 }

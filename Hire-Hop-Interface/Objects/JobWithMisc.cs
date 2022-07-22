@@ -1,66 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hire_Hop_Interface.Objects;
+﻿using Hire_Hop_Interface.Interface.Caching;
 using Hire_Hop_Interface.Interface.Connections;
+using System;
+using System.Collections.Generic;
 using System.Text.Json;
-using Hire_Hop_Interface.Interface.Caching;
+using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
 {
     public class JobWithMisc
     {
-        public Job job;
+        #region Fields
+
         public Bill bill;
         public Costs costs;
-        public DateTime lastModified;
         public JobItem[] items;
+        public Job job;
+        public DateTime lastModified;
 
-        public class Costs
-        {
-            #region Fields
+        #endregion Fields
 
-            public double supplyingPrice, serviceCost, equipmentCost, resourceCost, totalCost;
-
-            #endregion Fields
-        }
-        public class Bill
-        {
-            #region Fields
-
-            public double accrued, totalCredit, totalDebit;
-
-            #endregion Fields
-        }
+        #region Constructors
 
         public JobWithMisc(Job job)
         {
             this.job = job;
         }
 
-        public async Task LoadMisc(CookieConnection cookie, DefaultCost[] labourCosts)
+        #endregion Constructors
+
+        #region Methods
+
+        public async Task<Bill> CalculateBill(CookieConnection cookie)
         {
-            bill = await this.CalculateBill(cookie);
-            costs = await this.CalculateCosts(cookie, labourCosts);
-            lastModified = await this.GetLastModified(cookie);
-        }
+            Bill b = new Bill();
+            var bItems = await GetBill(cookie);
 
-        public async Task<DateTime> GetLastModified(CookieConnection cookie)
-        {
-            var log = await GetJobHistory(cookie);
+            foreach (var e in bItems.results)
+            {
+                if (e.TryGetProperty("kind", out var k))
+                {
+                    switch (k.GetInt32())
+                    {
+                        case 0:
+                            b.accrued += e.GetProperty("accrued").GetDouble();
+                            break;
 
-            string d = log != null && log.results.Length > 0 ? log.results[0].GetProperty("cell").GetProperty("date_time").GetString() : null;
+                        case 1:
+                            b.totalDebit += e.GetProperty("debit").GetDouble();
+                            break;
 
-            return d != null ? DateTime.Parse(d) : DateTime.MinValue;
+                        case 2:
+                            b.totalCredit += e.GetProperty("credit").GetDouble();
+                            break;
+
+                        case 3:
+                            b.totalCredit += e.GetProperty("credit").GetDouble();
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return b;
         }
 
         public async Task<Costs> CalculateCosts(CookieConnection cookie, DefaultCost[] labourCosts)
         {
             Costs c = new Costs();
             var bItems = await JobItem.GetJobItems(cookie, job);
-
 
             if (bItems.results.Length > 0)
             {
@@ -89,9 +98,11 @@ namespace Hire_Hop_Interface.Objects
                                 case "2":
                                     c.equipmentCost += cost;
                                     break;
+
                                 case "3":
                                     c.serviceCost += cost;
                                     break;
+
                                 case "4":
                                     c.resourceCost += cost;
                                     break;
@@ -109,9 +120,11 @@ namespace Hire_Hop_Interface.Objects
                                 c.equipmentCost += icm.cost * qty;
                             }
                             break;
+
                         case "3":
                             Console.WriteLine("Unable to load default cost for service: " + item.title);
                             break;
+
                         case "4":
                             if (DefaultCost.labour_cost_margins.TryGetValue(item.id, out var lcm))
                             {
@@ -125,70 +138,6 @@ namespace Hire_Hop_Interface.Objects
 
             c.totalCost = c.equipmentCost + c.resourceCost + c.serviceCost;
             return c;
-        }
-
-        public async Task<Bill> CalculateBill(CookieConnection cookie)
-        {
-            Bill b = new Bill();
-            var bItems = await GetBill(cookie);
-
-            foreach (var e in bItems.results)
-            {
-                if (e.TryGetProperty("kind", out var k))
-                {
-                    switch (k.GetInt32())
-                    {
-                        case 0:
-                            b.accrued += e.GetProperty("accrued").GetDouble();
-                            break;
-                        case 1:
-                            b.totalDebit += e.GetProperty("debit").GetDouble();
-                            break;
-                        case 2:
-                            b.totalCredit += e.GetProperty("credit").GetDouble();
-                            break;
-                        case 3:
-                            b.totalCredit += e.GetProperty("credit").GetDouble();
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
-            }
-
-            return b;
-        }
-        public async Task<SearchCollection<JsonElement>> GetJobHistory(CookieConnection cookie)
-        {
-            var req = new CacheableRequest("php_functions/log_list.php", "POST", cookie);
-            req.AddOrSetQuery("main_id", this.job.jobId);
-            req.AddOrSetQuery("type", "1");
-            req.AddOrSetQuery("_search", "false");
-            req.AddOrSetQuery("nd", "1631267281622");
-            req.AddOrSetQuery("rows", "100");
-            req.AddOrSetQuery("page", "1");
-            req.AddOrSetQuery("sidx", "date_time");
-            req.AddOrSetQuery("sord", "desc");
-
-            var d = await req.ExecuteWithCache();
-
-            if (d.TryParseJson(out var json))
-            {
-                if (json.Value.TryGetProperty("rows", out var e))
-                {
-                    List<JsonElement> l = new List<JsonElement>();
-                    var a = e.EnumerateArray();
-
-                    while (a.MoveNext())
-                    {
-                        l.Add(a.Current);
-                    }
-
-                    return new SearchCollection<JsonElement>() { results = l.ToArray(), max_page = 1 };
-                }
-            }
-            return null;
         }
 
         public async Task<SearchCollection<JsonElement>> GetBill(CookieConnection cookie)
@@ -226,5 +175,77 @@ namespace Hire_Hop_Interface.Objects
             }
             return null;
         }
+
+        public async Task<SearchCollection<JsonElement>> GetJobHistory(CookieConnection cookie)
+        {
+            var req = new CacheableRequest("php_functions/log_list.php", "POST", cookie);
+            req.AddOrSetQuery("main_id", this.job.jobId);
+            req.AddOrSetQuery("type", "1");
+            req.AddOrSetQuery("_search", "false");
+            req.AddOrSetQuery("nd", "1631267281622");
+            req.AddOrSetQuery("rows", "100");
+            req.AddOrSetQuery("page", "1");
+            req.AddOrSetQuery("sidx", "date_time");
+            req.AddOrSetQuery("sord", "desc");
+
+            var d = await req.ExecuteWithCache();
+
+            if (d.TryParseJson(out var json))
+            {
+                if (json.Value.TryGetProperty("rows", out var e))
+                {
+                    List<JsonElement> l = new List<JsonElement>();
+                    var a = e.EnumerateArray();
+
+                    while (a.MoveNext())
+                    {
+                        l.Add(a.Current);
+                    }
+
+                    return new SearchCollection<JsonElement>() { results = l.ToArray(), max_page = 1 };
+                }
+            }
+            return null;
+        }
+
+        public async Task<DateTime> GetLastModified(CookieConnection cookie)
+        {
+            var log = await GetJobHistory(cookie);
+
+            string d = log != null && log.results.Length > 0 ? log.results[0].GetProperty("cell").GetProperty("date_time").GetString() : null;
+
+            return d != null ? DateTime.Parse(d) : DateTime.MinValue;
+        }
+
+        public async Task LoadMisc(CookieConnection cookie, DefaultCost[] labourCosts)
+        {
+            bill = await this.CalculateBill(cookie);
+            costs = await this.CalculateCosts(cookie, labourCosts);
+            lastModified = await this.GetLastModified(cookie);
+        }
+
+        #endregion Methods
+
+        #region Classes
+
+        public class Bill
+        {
+            #region Fields
+
+            public double accrued, totalCredit, totalDebit;
+
+            #endregion Fields
+        }
+
+        public class Costs
+        {
+            #region Fields
+
+            public double supplyingPrice, serviceCost, equipmentCost, resourceCost, totalCost;
+
+            #endregion Fields
+        }
+
+        #endregion Classes
     }
 }
