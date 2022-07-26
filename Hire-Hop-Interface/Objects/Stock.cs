@@ -13,7 +13,7 @@ namespace Hire_Hop_Interface.Objects
             get { return json.Value.GetProperty("TITLE").GetString(); }
         }
 
-        public static async Task<SearchCollection<Asset>> SearchForAll(Interface.Connections.CookieConnection cookie)
+        public static async Task<SearchCollection<Stock>> SearchForAll(Interface.Connections.CookieConnection cookie)
         {
             var req = new CacheableRequest("modules/stock/list.php", "GET", cookie);
 
@@ -27,7 +27,7 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
             int page = 1, lastCount = 0, lastPage = 100;
-            List<Asset> results = new List<Asset>();
+            List<Stock> results = new List<Stock>();
 
             while ((lastCount != results.Count && lastPage >= page) || page == 1)
             {
@@ -43,7 +43,7 @@ namespace Hire_Hop_Interface.Objects
                         var rows = r.EnumerateArray();
                         while (rows.MoveNext())
                         {
-                            results.Add(new Asset() { json = rows.Current });
+                            results.Add(new Stock() { json = rows.Current });
                         }
                     }
                     else
@@ -53,7 +53,7 @@ namespace Hire_Hop_Interface.Objects
                 }
                 page++;
             }
-            return new SearchCollection<Asset>() { results = results.ToArray(), max_page = page };
+            return new SearchCollection<Stock>() { results = results.ToArray(), max_page = page };
         }
     }
 }

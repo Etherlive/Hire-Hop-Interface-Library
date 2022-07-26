@@ -15,6 +15,8 @@ namespace Hire_Hop_Interface.Objects
             get { return json.Value.GetProperty("BARCODE").GetString(); }
         }
 
+        public int stockId = -1;
+
         #endregion Properties
 
         #region Methods
@@ -30,7 +32,13 @@ namespace Hire_Hop_Interface.Objects
             {
                 if (json.Value.TryGetProperty("stock", out var stock_e) && stock_e.TryGetInt32(out int stock) && json.Value.TryGetProperty("asset", out var asset_e) && asset_e.TryGetInt32(out int asset))
                 {
-                    return await Asset.GetAsset(cookie, barcode, stock.ToString());
+                    var ass = await Asset.GetAsset(cookie, barcode, stock.ToString());
+
+                    if (ass!=null)
+                    {
+                        ass.stockId = stock;
+                    }
+                    return ass;
                 }
             }
 
