@@ -14,7 +14,7 @@ namespace Test
     {
         private Hire_Hop_Interface.Interface.Connections.CookieConnection cookie = new Hire_Hop_Interface.Interface.Connections.CookieConnection();
         [TestMethod]
-        public void EnsureCookieManagerWorks()
+        public void EnsureSearchWorks()
         {
             var t_obj = Asset.SearchForAll(cookie);
 
@@ -24,7 +24,19 @@ namespace Test
 
             Assert.IsTrue(obj.results.Length > 0);
         }
-        
+        [TestMethod]
+        public void EnsureBarcodeWorks()
+        {
+            string barcode = "001122";
+            var t_obj = Asset.FindByBarcode(cookie, barcode);
+
+            t_obj.Wait();
+
+            var obj = t_obj.Result;
+
+            Assert.IsTrue(obj.barcode == barcode);
+        }
+
         [TestInitialize]
         public void Setup()
         {
