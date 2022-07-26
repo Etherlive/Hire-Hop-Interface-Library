@@ -19,7 +19,24 @@ namespace Hire_Hop_Interface.Objects
 
         #region Methods
 
+        public static async Task<Asset> FindByBarcode(Interface.Connections.CookieConnection cookie, string barcode)
+        {
+            var req = new CacheableRequest("php_functions/barcode_find.php", "GET", cookie);
+            req.AddOrSetQuery("barcode", barcode);
 
+            var res = await req.ExecuteWithCache();
+
+            if (res.TryParseJson(out var json))
+            {
+                if (json.Value.TryGetProperty("stock", out var stock_e) && stock_e.TryGetInt32(out int stock) && json.Value.TryGetProperty("asset", out var asset_e) && asset_e.TryGetInt32(out int asset))
+                {
+                    return await Asset.GetAsset(cookie, barcode, stock.ToString());
+                }
+            }
+
+            return null;
+        }
+        
         public static async Task<Asset> GetAsset(Interface.Connections.CookieConnection cookie, string barcode, string stock)
         {
             var req = new CacheableRequest("modules/stock/equipment_list.php", "GET", cookie);
@@ -49,66 +66,7 @@ namespace Hire_Hop_Interface.Objects
         }
 
 
-        public static async Task<Asset> FindByBarcode(Interface.Connections.CookieConnection cookie, string barcode)
-        {
-            var req = new CacheableRequest("php_functions/barcode_find.php", "GET", cookie);
-            req.AddOrSetQuery("barcode", barcode);
-
-            var res = await req.ExecuteWithCache();
-
-            if (res.TryParseJson(out var json))
-            {
-                if (json.Value.TryGetProperty("stock", out var stock_e) && stock_e.TryGetInt32(out int stock) && json.Value.TryGetProperty("asset", out var asset_e) && asset_e.TryGetInt32(out int asset))
-                {
-                    return await GetAsset(cookie, barcode, stock.ToString());
-                }
-            }
-
-            return null;
-        }
-
-        public static async Task<SearchCollection<Asset>> SearchForAll(Interface.Connections.CookieConnection cookie)
-        {
-            var req = new CacheableRequest("modules/stock/list.php", "GET", cookie);
-
-            req.AddOrSetQuery("head", "0");
-            req.AddOrSetQuery("del", "0");
-            req.AddOrSetQuery("_search", "false");
-            req.AddOrSetQuery("rows", "50");
-            req.AddOrSetQuery("nd", "1646206198206");
-            req.AddOrSetQuery("sidx", "TITLE");
-            req.AddOrSetQuery("sord", "asc");
-            req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            int page = 1, lastCount = 0, lastPage = 100;
-            List<Asset> results = new List<Asset>();
-
-            while ((lastCount != results.Count && lastPage>=page) || page == 1)
-            {
-                lastCount = results.Count;
-                req.AddOrSetQuery("page", page.ToString());
-                var res = await req.ExecuteWithCache();
-
-                if (res.TryParseJson(out JsonElement? json))
-                {
-                    lastPage = json.Value.GetProperty("total").GetInt32();
-                    if (json.Value.TryGetProperty("rows", out var r))
-                    {
-                        var rows = r.EnumerateArray();
-                        while (rows.MoveNext())
-                        {
-                            results.Add(new Asset() { json = rows.Current });
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                page++;
-            }
-            return new SearchCollection<Asset>() { results = results.ToArray(), max_page = page };
-        }
+        
 
         #endregion Methods
     }

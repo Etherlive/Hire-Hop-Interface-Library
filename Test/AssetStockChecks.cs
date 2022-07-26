@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 namespace Test
 {
     [TestClass]
-    public class AssetChecks
+    public class AssetStockChecks
     {
         private Hire_Hop_Interface.Interface.Connections.CookieConnection cookie = new Hire_Hop_Interface.Interface.Connections.CookieConnection();
         [TestMethod]
         public void EnsureSearchWorks()
         {
-            var t_obj = Asset.SearchForAll(cookie);
+            var t_obj = Stock.SearchForAll(cookie);
 
             t_obj.Wait();
 
