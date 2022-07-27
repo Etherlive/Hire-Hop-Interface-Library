@@ -142,12 +142,12 @@ namespace Hire_Hop_Interface.Objects
 
         public async Task<SearchCollection<JsonElement>> GetBill(CookieConnection cookie)
         {
-            string date_str = $"{DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
+            //string date_str = $"{DateTime.Now.ToString("yyyy-MM-dd+HH:mm:ss")}";
 
             var req = new CacheableRequest("php_functions/billing_list.php", "POST", cookie);
             req.AddOrSetQuery("main_id", this.job.jobId);
             req.AddOrSetQuery("type", "1");
-            req.AddOrSetQuery("local", date_str);
+            //req.AddOrSetQuery("local", date_str);
             req.AddOrSetQuery("tz", "Europe/London");
             req.AddOrSetQuery("fix", "0");
             req.AddOrSetQuery("_search", "false");

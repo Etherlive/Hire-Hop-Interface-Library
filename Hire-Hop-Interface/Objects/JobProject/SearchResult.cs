@@ -66,7 +66,7 @@ namespace Hire_Hop_Interface.Objects.JobProject
         {
             var req = new CacheableRequest("frames/search_field_results.php", "POST", cookie);
 
-            req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            //req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
             req.AddOrSetQuery("jobs", options.jobs ? "1" : "0");
             req.AddOrSetQuery("projects", options.projects ? "1" : "0");
