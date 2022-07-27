@@ -1,21 +1,22 @@
 ﻿using Hire_Hop_Interface.Interface.Caching;
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
 {
     public class Asset : JsonObject
     {
+        #region Fields
+
+        public int stockId = -1;
+
+        #endregion Fields
+
         #region Properties
 
         public string barcode
         {
             get { return json.Value.GetProperty("BARCODE").GetString(); }
         }
-
-        public int stockId = -1;
 
         #endregion Properties
 
@@ -34,7 +35,7 @@ namespace Hire_Hop_Interface.Objects
                 {
                     var ass = await Asset.GetAsset(cookie, barcode, stock.ToString());
 
-                    if (ass!=null)
+                    if (ass != null)
                     {
                         ass.stockId = stock;
                     }
@@ -44,7 +45,7 @@ namespace Hire_Hop_Interface.Objects
 
             return null;
         }
-        
+
         public static async Task<Asset> GetAsset(Interface.Connections.CookieConnection cookie, string barcode, string stock)
         {
             var req = new CacheableRequest("modules/stock/equipment_list.php", "GET", cookie);
@@ -72,9 +73,6 @@ namespace Hire_Hop_Interface.Objects
             }
             return null;
         }
-
-
-        
 
         #endregion Methods
     }

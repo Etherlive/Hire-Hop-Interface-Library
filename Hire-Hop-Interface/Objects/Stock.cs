@@ -1,6 +1,6 @@
 ﻿using Hire_Hop_Interface.Interface.Caching;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -8,9 +8,27 @@ namespace Hire_Hop_Interface.Objects
 {
     public class Stock : JsonObject
     {
+        #region Properties
+
+        public int id
+        {
+            get { return json.Value.GetProperty("id").GetInt32(); }
+        }
+
         public string title
         {
             get { return json.Value.GetProperty("TITLE").GetString(); }
+        }
+
+        #endregion Properties
+
+        #region Methods
+
+        public static async Task<Stock> FindStock(Interface.Connections.CookieConnection cookie, int id)
+        {
+            var all_stock = await SearchForAll(cookie);
+
+            return all_stock.results.FirstOrDefault(x => x.id == id);
         }
 
         public static async Task<SearchCollection<Stock>> SearchForAll(Interface.Connections.CookieConnection cookie)
@@ -24,7 +42,7 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("nd", "1646206198206");
             req.AddOrSetQuery("sidx", "TITLE");
             req.AddOrSetQuery("sord", "asc");
-            req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            //req.AddOrSetQuery("local", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
             int page = 1, lastCount = 0, lastPage = 100;
             List<Stock> results = new List<Stock>();
@@ -43,7 +61,7 @@ namespace Hire_Hop_Interface.Objects
                         var rows = r.EnumerateArray();
                         while (rows.MoveNext())
                         {
-                            results.Add(new Stock() { json = rows.Current });
+                            results.Add(new Stock() { json = rows.Current.GetProperty("cell") });
                         }
                     }
                     else
@@ -55,5 +73,7 @@ namespace Hire_Hop_Interface.Objects
             }
             return new SearchCollection<Stock>() { results = results.ToArray(), max_page = page };
         }
+
+        #endregion Methods
     }
 }

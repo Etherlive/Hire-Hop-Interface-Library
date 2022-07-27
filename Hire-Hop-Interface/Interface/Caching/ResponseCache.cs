@@ -29,7 +29,7 @@ namespace Hire_Hop_Interface.Interface.Caching
 
             if (responseStore.TryGetValue(key, out CachedResponse c_response))
             {
-                if (c_response.requestTime.AddMinutes(1) > DateTime.Now)
+                if (c_response.requestTime.AddMinutes(10) > DateTime.Now)
                 {
                     response = c_response;
                     return true;

@@ -1,29 +1,20 @@
 ﻿using Hire_Hop_Interface.Interface;
 using Hire_Hop_Interface.Objects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Test
 {
     [TestClass]
     public class AssetStockChecks
     {
+        #region Fields
+
         private Hire_Hop_Interface.Interface.Connections.CookieConnection cookie = new Hire_Hop_Interface.Interface.Connections.CookieConnection();
-        [TestMethod]
-        public void EnsureSearchWorks()
-        {
-            var t_obj = Stock.SearchForAll(cookie);
 
-            t_obj.Wait();
+        #endregion Fields
 
-            var obj = t_obj.Result;
+        #region Methods
 
-            Assert.IsTrue(obj.results.Length > 0);
-        }
         [TestMethod]
         public void EnsureBarcodeWorks()
         {
@@ -37,6 +28,34 @@ namespace Test
             Assert.IsTrue(obj.barcode == barcode);
         }
 
+        [TestMethod]
+        public void EnsureIDLookupWorks()
+        {
+            var t_obj_1 = Stock.FindStock(cookie, 402);
+            var t_obj_2 = Stock.FindStock(cookie, 156);
+
+            t_obj_1.Wait();
+            t_obj_2.Wait();
+
+            var obj_1 = t_obj_1.Result;
+            var obj_2 = t_obj_2.Result;
+
+            Assert.IsNotNull(obj_1);
+            Assert.IsNotNull(obj_2);
+        }
+
+        [TestMethod]
+        public void EnsureSearchWorks()
+        {
+            var t_obj = Stock.SearchForAll(cookie);
+
+            t_obj.Wait();
+
+            var obj = t_obj.Result;
+
+            Assert.IsTrue(obj.results.Length > 0);
+        }
+
         [TestInitialize]
         public void Setup()
         {
@@ -46,5 +65,7 @@ namespace Test
 
             Assert.IsTrue(req.Result);
         }
+
+        #endregion Methods
     }
 }
