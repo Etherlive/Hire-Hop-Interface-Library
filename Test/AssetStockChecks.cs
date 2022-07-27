@@ -29,6 +29,18 @@ namespace Test
         }
 
         [TestMethod]
+        public void EnsureGetAssetWorks()
+        {
+            var t_obj = Asset.GetAssets(cookie, 25);
+
+            t_obj.Wait();
+
+            var obj = t_obj.Result;
+
+            Assert.IsTrue(obj.results.Length > 0);
+        }
+
+        [TestMethod]
         public void EnsureIDLookupWorks()
         {
             var t_obj_1 = Stock.FindStock(cookie, 402);

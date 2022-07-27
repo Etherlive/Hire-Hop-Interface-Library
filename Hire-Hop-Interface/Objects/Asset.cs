@@ -1,4 +1,6 @@
 ﻿using Hire_Hop_Interface.Interface.Caching;
+using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Hire_Hop_Interface.Objects
@@ -33,24 +35,23 @@ namespace Hire_Hop_Interface.Objects
             {
                 if (json.Value.TryGetProperty("stock", out var stock_e) && stock_e.TryGetInt32(out int stock) && json.Value.TryGetProperty("asset", out var asset_e) && asset_e.TryGetInt32(out int asset))
                 {
-                    var ass = await Asset.GetAsset(cookie, barcode, stock.ToString());
+                    var ass = await Asset.GetAssets(cookie, stock, barcode);
 
-                    if (ass != null)
+                    if (ass.results.Length > 0)
                     {
-                        ass.stockId = stock;
+                        return ass.results[0];
                     }
-                    return ass;
                 }
             }
 
             return null;
         }
 
-        public static async Task<Asset> GetAsset(Interface.Connections.CookieConnection cookie, string barcode, string stock)
+        public static async Task<SearchCollection<Asset>> GetAssets(Interface.Connections.CookieConnection cookie, int stock, string barcode = "")
         {
             var req = new CacheableRequest("modules/stock/equipment_list.php", "GET", cookie);
-            req.AddOrSetQuery("BARCODE", barcode);
-            req.AddOrSetQuery("stock", stock);
+            if (barcode.Length > 0) req.AddOrSetQuery("BARCODE", barcode);
+            req.AddOrSetQuery("stock", stock.ToString());
             req.AddOrSetQuery("del", "false");
             req.AddOrSetQuery("_search", "true");
             req.AddOrSetQuery("rows", "50");
@@ -58,20 +59,34 @@ namespace Hire_Hop_Interface.Objects
             req.AddOrSetQuery("sidx", "BARCODE");
             req.AddOrSetQuery("sord", "asc");
 
-            var res = await req.ExecuteWithCache();
+            int page = 1, lastCount = 0, lastPage = 100;
+            List<Asset> results = new List<Asset>();
 
-            if (res.TryParseJson(out var json))
+            while ((lastCount != results.Count && lastPage >= page) || page == 1)
             {
-                if (json.Value.TryGetProperty("rows", out var rows_e))
-                {
-                    var row_enum = rows_e.EnumerateArray();
-                    row_enum.MoveNext();
-                    var asset = row_enum.Current.GetProperty("cell");
+                lastCount = results.Count;
+                req.AddOrSetQuery("page", page.ToString());
+                var res = await req.ExecuteWithCache();
 
-                    return new Asset() { json = asset };
+                if (res.TryParseJson(out JsonElement? json))
+                {
+                    lastPage = json.Value.GetProperty("total").GetInt32();
+                    if (json.Value.TryGetProperty("rows", out var r))
+                    {
+                        var rows = r.EnumerateArray();
+                        while (rows.MoveNext())
+                        {
+                            results.Add(new Asset() { json = rows.Current.GetProperty("cell") });
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
+                page++;
             }
-            return null;
+            return new SearchCollection<Asset>() { results = results.ToArray(), max_page = page };
         }
 
         #endregion Methods

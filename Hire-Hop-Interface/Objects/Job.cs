@@ -119,10 +119,6 @@ namespace Hire_Hop_Interface.Objects
                 return json.HasValue && json.Value.TryGetProperty("JOB_END", out var e) && e.ValueKind != JsonValueKind.Null ? DateTime.Parse(e.GetString()) : DateTime.MinValue;
             }
         }
-        public int status
-        {
-            get { return this.json.Value.GetProperty("STATUS").GetInt32(); }
-        }
 
         public string id
         {
@@ -156,6 +152,11 @@ namespace Hire_Hop_Interface.Objects
             {
                 return json.HasValue ? DateTime.Parse(json.Value.GetProperty("JOB_DATE").GetString()) : DateTime.MinValue;
             }
+        }
+
+        public int status
+        {
+            get { return this.json.Value.GetProperty("STATUS").GetInt32(); }
         }
 
         #endregion Properties
